@@ -22750,7 +22750,7 @@ PartyResult Player::CanUninviteFromGroup() const
         if (!grp->IsLeader(GetGUID()) && !grp->IsAssistant(GetGUID()))
             return ERR_NOT_LEADER;
 
-        if (InBattleground())
+        if (InBattleground() || grp->isBFGroup())
             return ERR_INVITE_RESTRICTED;
     }
 
