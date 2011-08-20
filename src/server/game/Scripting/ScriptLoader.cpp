@@ -25,36 +25,8 @@ void AddSC_example_gossip_codebox();
 void AddSC_example_misc();
 void AddSC_example_commandscript();
 
-//GuildhouseNPC
-void AddSC_guildmaster();	
-//TeleNPC2
-void AddSC_npc_teleport();
-//Hunter Pet Vendor
-void AddSC_npc_hunterpetvendor();
 // Custom
 void AddSC_DuelReset();
-//NPC Customizer
-void AddSC_npc_customize();
-//NPC Transport Service
-void AddSC_npc_mount();	
-// Argent Tournament quest scripts
-void AddSC_ArgentTournament();
-//Item Summon NPC
-void AddSC_npc_item_summon();
-//Custom Stone
-void AddSC_item_custom_stone();
-//Item Requester
-//void AddSC_ItemRequester();
-//Profession NPC
-void AddSC_professionnpc();
-//Pryds All-in-One
-void AddSC_pryds_allinone();
-//Mini Boss
-void AddSC_npcs_mini_boss();
-//Lottery
-//void AddSC_npc_lottery();
-// Killstreak PvP System
-//void AddSC_PVP_System();
 
 // spells
 void AddSC_deathknight_spell_scripts();
@@ -443,7 +415,6 @@ void AddSC_ruby_sanctum();
 void AddSC_boss_baltharus_the_warborn();
 void AddSC_boss_saviana_ragefire();
 void AddSC_boss_general_zarithrian();
-void AddSC_boss_halion();
 void AddSC_boss_bjarngrim();             //Ulduar Halls of Lightning
 void AddSC_boss_loken();
 void AddSC_boss_ionar();
@@ -1154,7 +1125,6 @@ void AddNorthrendScripts()
     AddSC_boss_baltharus_the_warborn();
     AddSC_boss_saviana_ragefire();
     AddSC_boss_general_zarithrian();
-    AddSC_boss_halion();
 	AddSC_boss_bjarngrim();             //Ulduar Halls of Lightning
     AddSC_boss_loken();
     AddSC_boss_ionar();
@@ -1281,34 +1251,7 @@ void AddCustomScripts()
 {
 #ifdef SCRIPTS
     /* This is where custom scripts should be added. */
-    //GuildhouseNPC
-    AddSC_guildmaster();	
-    //TeleNPC2
-    AddSC_npc_teleport();
-    //Hunter Pet Vendor
-    //Hunter Pet Vendor
-    AddSC_npc_hunterpetvendor();
-	//NPC Customizer
-	AddSC_npc_customize();		
-	//Item Summon NPC
-	AddSC_npc_item_summon();	
-	//Custom Stone
-	AddSC_item_custom_stone();
-	//Item Requester
-	//AddSC_ItemRequester();
-	//Profession NPC
-	AddSC_professionnpc();
-	//Pryds All-in-One
-	AddSC_pryds_allinone();
-	//Mini Boss
-	AddSC_npcs_mini_boss();
-	//Lottery
-	//AddSC_npc_lottery();	
-	// Killstreak PvP System
-	//AddSC_PVP_System();
     // Custom
     AddSC_DuelReset();
-    AddSC_npc_mount();		
-    AddSC_ArgentTournament();
 #endif
 }

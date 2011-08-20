@@ -2936,13 +2936,11 @@ void SpellMgr::LoadDbcDataCorrections()
         case 57992: // Envenom (Rank 3)
         case 57993: // Envenom (Rank 4)
             spellInfo->Dispel = DISPEL_NONE;
-            ++count;
             break;
         case 49224: // Magic Suppression Rank 1
         case 49610: // Magic Suppression Rank 2
         case 49611: // Magic Suppression Rank 3
         	spellInfo->procCharges = 0;
-        	++count;
         	break;
         case 49838: // Stop Time
             spellInfo->AttributesEx3 |= SPELL_ATTR3_NO_INITIAL_AGGRO;

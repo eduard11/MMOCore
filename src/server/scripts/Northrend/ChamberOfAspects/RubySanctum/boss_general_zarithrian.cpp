@@ -85,7 +85,7 @@ Position const FlamecallerWaypoints[MAX_PATH_FLAMECALLER_WAYPOINTS*2] =
 class boss_general_zarithrian : public CreatureScript
 {
     public:
-        boss_general_zarithrian() : CreatureScript("boss_zarithrian") { }
+        boss_general_zarithrian() : CreatureScript("boss_general_zarithrian") { }
 
         struct boss_general_zarithrianAI : public BossAI
         {
@@ -120,8 +120,6 @@ class boss_general_zarithrian : public CreatureScript
             void JustSummoned(Creature* summon)
             {
                 summons.Summon(summon);
-                if (Player* target = summon->SelectNearestPlayer(100.0f))
-                	summon->AI()->AttackStart(target);
             }
 
             void JustDied(Unit* /*killer*/)
@@ -192,7 +190,7 @@ class boss_general_zarithrian : public CreatureScript
 class npc_onyx_flamecaller : public CreatureScript
 {
     public:
-        npc_onyx_flamecaller() : CreatureScript("mob_flamecaller_ruby") { }
+        npc_onyx_flamecaller() : CreatureScript("npc_onyx_flamecaller") { }
 
         struct npc_onyx_flamecallerAI : public npc_escortAI
         {

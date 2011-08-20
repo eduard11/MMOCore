@@ -42,24 +42,11 @@ enum DataTypes
     DATA_ZARITHIAN_SPAWN_STALKER_1          = 7,
     DATA_ZARITHIAN_SPAWN_STALKER_2          = 8,
     DATA_HALION_CONTROLLER                  = 9,
-    DATA_HALION_TWILIGHT					= 10,
-    DATA_BURNING_TREE_1                     = 11,
-    DATA_BURNING_TREE_2                     = 12,
-    DATA_BURNING_TREE_3                     = 13,
-    DATA_BURNING_TREE_4                     = 14,
-    DATA_FLAME_RING                         = 15,
-
-    DATA_ORB_CARRIER                         = 16,
-	DATA_ORB_ROTATION_FOCUS                  = 17,
-	DATA_SHADOW_ORB_N                        = 18,
-	DATA_SHADOW_ORB_S                        = 19,
-	DATA_ORB_DIRECTION						 = 20,
-
-	DATA_HALION_PORTAL_1					 = 21,
-	DATA_HALION_PORTAL_2					 = 22,
-	DATA_HALION_PORTAL_3					 = 23,
-
-	DATA_HALION_EVENT						 = 24,
+    DATA_BURNING_TREE_1                     = 10,
+    DATA_BURNING_TREE_2                     = 11,
+    DATA_BURNING_TREE_3                     = 12,
+    DATA_BURNING_TREE_4                     = 13,
+    DATA_FLAME_RING                         = 14,
 };
 
 enum SharedActions
@@ -90,16 +77,15 @@ enum CreaturesIds
     NPC_HALION_CONTROLLER                   = 40146,
     NPC_LIVING_INFERNO                      = 40681,
     NPC_LIVING_EMBER                        = 40683,
+    NPC_ORB_CARRIER                         = 40081,
+    NPC_ORB_ROTATION_FOCUS                  = 40091,
+    NPC_SHADOW_ORB_N                        = 40083,
+    NPC_SHADOW_ORB_S                        = 40100,
     NPC_METEOR_STRIKE_NORTH                 = 40041,
     NPC_METEOR_STRIKE_EAST                  = 40042,
     NPC_METEOR_STRIKE_WEST                  = 40043,
     NPC_METEOR_STRIKE_SOUTH                 = 40044,
     NPC_METEOR_STRIKE_FLAME                 = 40055,
-
-    NPC_ORB_CARRIER                         = 40081,
-	NPC_ORB_ROTATION_FOCUS                  = 40091,
-	NPC_SHADOW_ORB_N                        = 40083,
-	NPC_SHADOW_ORB_S                        = 40100,
 
     // Xerestrasza
     NPC_XERESTRASZA                         = 40429,
@@ -109,7 +95,7 @@ enum GameObjectsIds
 {
     GO_HALION_PORTAL_1                      = 202794,   // Unknown spell 75074, should be somehow be linked to 74807
     GO_HALION_PORTAL_2                      = 202795,   // Also spell 75074
-    GO_HALION_PORTAL_3                   	= 202796,   // Leave Twilight Realm (74812)
+    GO_HALION_PORTAL_EXIT                   = 202796,   // Leave Twilight Realm (74812)
     GO_FIRE_FIELD                           = 203005,
     GO_FLAME_WALLS                          = 203006,
     GO_FLAME_RING                           = 203007,
@@ -131,7 +117,7 @@ CreatureAI* GetRubySanctumAI(Creature* creature)
 {
     if (InstanceMap* instance = creature->GetMap()->ToInstanceMap())
         if (instance->GetInstanceScript())
-            if (instance->GetScriptId() == GetScriptId(RSScriptName))
+            if (instance->GetScriptId() == sObjectMgr->GetScriptId(RSScriptName))
                 return new AI(creature);
     return NULL;
 }

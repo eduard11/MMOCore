@@ -47,7 +47,7 @@ Position const xerestraszaMovePos = {3151.236f, 379.8733f, 86.31996f, 0.0f};
 class npc_xerestrasza : public CreatureScript
 {
     public:
-        npc_xerestrasza() : CreatureScript("mob_xerestrasza") { }
+        npc_xerestrasza() : CreatureScript("npc_xerestrasza") { }
 
         struct npc_xerestraszaAI : public ScriptedAI
         {

@@ -69,7 +69,7 @@ enum Phases
 class boss_baltharus_the_warborn : public CreatureScript
 {
     public:
-        boss_baltharus_the_warborn() : CreatureScript("boss_baltharus") { }
+        boss_baltharus_the_warborn() : CreatureScript("boss_baltharus_the_warborn") { }
 
         struct boss_baltharus_the_warbornAI : public BossAI
         {
@@ -224,7 +224,7 @@ class boss_baltharus_the_warborn : public CreatureScript
 class npc_baltharus_the_warborn_clone : public CreatureScript
 {
     public:
-        npc_baltharus_the_warborn_clone() : CreatureScript("mob_baltharus_clone") { }
+        npc_baltharus_the_warborn_clone() : CreatureScript("npc_baltharus_the_warborn_clone") { }
 
         struct npc_baltharus_the_warborn_cloneAI : public ScriptedAI
         {
@@ -312,7 +312,7 @@ class spell_baltharus_enervating_brand : public SpellScriptLoader
             {
                 PreventDefaultAction();
                 Unit* target = GetTarget();
-                uint32 triggerSpellId = GetSpellProto()->EffectTriggerSpell[aurEff->GetEffIndex()];
+                uint32 triggerSpellId = GetSpellInfo()->Effects[aurEff->GetEffIndex()].TriggerSpell;
                 target->CastSpell(target, triggerSpellId, true);
 
                 if (Unit* caster = GetCaster())
@@ -369,8 +369,8 @@ class spell_baltharus_enervating_brand_trigger : public SpellScriptLoader
 
             void Register()
             {
-                OnUnitTargetSelect += SpellUnitTargetFn(spell_baltharus_enervating_brand_trigger_SpellScript::FilterTargets, EFFECT_0, TARGET_UNIT_AREA_ALLY_SRC);
-                OnUnitTargetSelect += SpellUnitTargetFn(spell_baltharus_enervating_brand_trigger_SpellScript::FilterTargets, EFFECT_1, TARGET_UNIT_AREA_ALLY_SRC);
+                OnUnitTargetSelect += SpellUnitTargetFn(spell_baltharus_enervating_brand_trigger_SpellScript::FilterTargets, EFFECT_0, TARGET_UNIT_SRC_AREA_ALLY);
+                OnUnitTargetSelect += SpellUnitTargetFn(spell_baltharus_enervating_brand_trigger_SpellScript::FilterTargets, EFFECT_1, TARGET_UNIT_SRC_AREA_ALLY);
             }
         };
 
