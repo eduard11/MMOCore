@@ -2111,6 +2111,7 @@ class go_hor_dalaran_portal : public GameObjectScript
         bool OnGossipHello(Player* player, GameObject* go)
         {
         	player->TeleportTo(571, 5804.148, 624.770, 647.767, 1.303);
+			return true;
         }
 };
 
