@@ -22,27 +22,27 @@
 #define REQUESTER_SCRIPT_NAME "custom_gossip_script_itemrequester"
 
 // Menus
-#define REQUESTER_MENU_REQUEST_ITEM "Request an item"
-#define REQUESTER_MENU_REQUEST_CONFIRMATION "Enter Item Id Or Name"
-#define REQUESTER_MENU_EXIT	"[Exit]"
+#define REQUESTER_MENU_REQUEST_ITEM "Запрос предмета"
+#define REQUESTER_MENU_REQUEST_CONFIRMATION "Введите айди или имя предмета"
+#define REQUESTER_MENU_EXIT	"[Выход]"
 
 // Errors
-#define REQUESTER_ERROR_INVALID_ITEM "Invalid Item entered"
-#define REQUESTER_ERROR_QUALITY_TOO_HIGH "Requested Item Quality is too high."
-#define REQUESTER_ERROR_REQUIREMENTS_NOT_MET "Item cannot be requested, you do not meet the requirements."
-#define REQUESTER_ERROR_ITEM_CREATION_FAILED "Item creation failed"
+#define REQUESTER_ERROR_INVALID_ITEM "Неправильный предмет введён."
+#define REQUESTER_ERROR_QUALITY_TOO_HIGH "У запрашиваемого предмета слишком высокое качество."
+#define REQUESTER_ERROR_REQUIREMENTS_NOT_MET "Предмет не может быть запрошен, вы не соответствуете требованиям."
+#define REQUESTER_ERROR_ITEM_CREATION_FAILED "Не удалось создать предмет."
 
 // Mail
-#define REQUESTER_DEFAULT_MAIL_SUBJECT "ItemRequester: Your item has arrived"
+#define REQUESTER_DEFAULT_MAIL_SUBJECT "Ваш предмет пришёл!"
 #define REQUESTER_DEFAULT_MAIL_BODY ""
-#define REQUESTER_MAIL_SUCCESS "Item has been mailed"
+#define REQUESTER_MAIL_SUCCESS "Предмет отправлен на почту!"
 
 // Level Requirements
 enum REQUESTER_QUALITY_LEVEL_REQUIRED
 {
-	//REQUESTER_QUALITY_LEVEL_PNU		= 55,	// ITEM_QUALITY_POOR / ITEM_QUALITY_NORMAL / ITEM_QUALITY_UNCOMMON
-	//REQUESTER_QUALITY_LEVEL_RARE	= 60,	// ITEM_QUALITY_RARE
-	//REQUESTER_QUALITY_LEVEL_EPIC	= 65	// ITEM_QUALITY_EPIC
+	REQUESTER_QUALITY_LEVEL_PNU		= 55,	// ITEM_QUALITY_POOR / ITEM_QUALITY_NORMAL / ITEM_QUALITY_UNCOMMON
+	REQUESTER_QUALITY_LEVEL_RARE	= 60,	// ITEM_QUALITY_RARE
+	REQUESTER_QUALITY_LEVEL_EPIC	= 65	// ITEM_QUALITY_EPIC
 	REQUESTER_QUALITY_LEVEL_PNU		= 500,	// ITEM_QUALITY_POOR / ITEM_QUALITY_NORMAL / ITEM_QUALITY_UNCOMMON
 	REQUESTER_QUALITY_LEVEL_RARE	= 500,	// ITEM_QUALITY_RARE
 	REQUESTER_QUALITY_LEVEL_EPIC	= 500	// ITEM_QUALITY_EPIC	

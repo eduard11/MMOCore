@@ -6,37 +6,36 @@
  
 enum Creatures
 {
-        //CREATURE_FELSHETZER                                   = 19350,
+        CREATURE_FELSHETZER                                   = 19350,
         CREATURE_FLEDERMAUS                                     = 3866,
         CREATURE_NETHERROCHEN                           = 18131,
         CREATURE_RAUBVOGELROT                           = 21804,
         CREATURE_RAUBVOGELSCHWARZ                       = 25817,
         CREATURE_RAUBVOGELWEISS                         = 26369,
-        //CREATURE_SCHLANGE                                     = 5224,
+        CREATURE_SCHLANGE                                     = 5224,
         CREATURE_SPINNE                                         = 20714,
         CREATURE_GORILLASCHWARZ                         = 2521,
         CREATURE_GORILLAWEISS                           = 6516,
         CREATURE_KREBS                                          = 23929,
-        //CREATURE_KROKOLISK                            = 20773,
-        //CREATURE_AASVOGEL                                     = 16972,
+        CREATURE_KROKOLISK                            = 20773,
+        CREATURE_AASVOGEL                                     = 16972,
         CREATURE_HYAENE                                         = 27294,
         CREATURE_KATZETIGER                                     = 7434,
         CREATURE_KATZELOEWE                                     = 28097,
-        //CREATURE_KATZELUCHS                                   = 24043,
+        CREATURE_KATZELUCHS                                   = 24043,
         CREATURE_RAPTORGRUEN                                    = 21124,
         CREATURE_RAPTORROT                                      = 4352,
         CREATURE_WEITSCHREITER                          = 3246,
         CREATURE_WESPEROT                                       = 18283,
         CREATURE_WESPEBLAU                                      = 28086,
         CREATURE_WOLFRUESTUNG                           = 17280,
-        //CREATURE_WOLFGRAU                                     = 24128,
-        //CREATURE_WOLFWEI?                                     = 26672,
-       
+        CREATURE_WOLFGRAU                                     = 24128,
+        CREATURE_WOLFWEI                                     = 26672,
         CREATURE_SCHIMAERE                                      = 20932,
         CREATURE_SILITHIDGELB                           = 15230,
         CREATURE_SILITHIDROT                            = 5460,
         CREATURE_RHINOZEROS                                     = 25488,
-        //CREATURE_WURMBRAUN                                    = 34920,
+        CREATURE_WURMBRAUN                                    = 34920,
         CREATURE_WURMGELB                                       = 14237,
         CREATURE_KERNHUNDWEISS                          = 17447,
         CREATURE_KERNHUNDROT                            = 11671,
@@ -95,9 +94,9 @@ enum Creatures
  
  
  //Preise
-#define PRICE_PET_TYP_1    250000
-#define PRICE_PET_TYP_2    5000000
-#define MSG_NOT_MONEY "Du hast nicht genug Gold!"
+#define PRICE_PET_TYP_1    2500000
+#define PRICE_PET_TYP_2    50000000
+#define MSG_NOT_MONEY "У вас недостаточно денег!"
 #define MSG_PET_SUMMON "Dein Pet wird jetzt beschworen"
  
 class npc_hunterpetvendor : public CreatureScript
@@ -109,8 +108,8 @@ bool OnGossipHello(Player* player, Creature* creature)
 {
         if ((player->getClass() == CLASS_HUNTER))
         {
-        player->ADD_GOSSIP_ITEM(0, "Normal Pets (Kosten 25 Gold)", GOSSIP_SENDER_MAIN, pets);
-        player->ADD_GOSSIP_ITEM(0, "Exotic Pets (Kosten 500 Gold)", GOSSIP_SENDER_MAIN, exotic);
+        player->ADD_GOSSIP_ITEM(0, "Обычные питомцы (Стоят 250 Голд)", GOSSIP_SENDER_MAIN, pets);
+        player->ADD_GOSSIP_ITEM(0, "Экзотические питомцы (Стоят 5000 Голд)", GOSSIP_SENDER_MAIN, exotic);
         player->SEND_GOSSIP_MENU(40009, creature->GetGUID());
     return true;
         }
@@ -127,32 +126,32 @@ player->PlayerTalkClass->ClearMenus();
     switch(action)
     {
                 case pets:
-                        //player->ADD_GOSSIP_ITEM(2, "Felshetzer", GOSSIP_SENDER_MAIN, felshetzer);
+                        player->ADD_GOSSIP_ITEM(2, "Felshetzer", GOSSIP_SENDER_MAIN, felshetzer);
                         player->ADD_GOSSIP_ITEM(2, "Fledermaus", GOSSIP_SENDER_MAIN, fledermaus);
                         player->ADD_GOSSIP_ITEM(2, "Netherrochen", GOSSIP_SENDER_MAIN, netherrochen);
                         player->ADD_GOSSIP_ITEM(2, "Raubvogel (Kaliri von Skettis)", GOSSIP_SENDER_MAIN, raubvogelrot);
                         player->ADD_GOSSIP_ITEM(2, "Raubvogel (Oelbeschmierter Jungvogel)", GOSSIP_SENDER_MAIN, raubvogelschwarz);
                         player->ADD_GOSSIP_ITEM(2, "Raubvogel (Kaiseradler)", GOSSIP_SENDER_MAIN, raubvogelweiss);
-                        //player->ADD_GOSSIP_ITEM(2, "Schlange", GOSSIP_SENDER_MAIN, schlange);
+                        player->ADD_GOSSIP_ITEM(2, "Schlange", GOSSIP_SENDER_MAIN, schlange);
                         player->ADD_GOSSIP_ITEM(2, "Spinne", GOSSIP_SENDER_MAIN, spinne);
                         player->ADD_GOSSIP_ITEM(2, "Gorilla (Blaumaehnengorilla)", GOSSIP_SENDER_MAIN, gorillaschwarz);
                         player->ADD_GOSSIP_ITEM(2, "Gorilla (Donnerer von Un'Goro)", GOSSIP_SENDER_MAIN, gorillaweiss);
                         player->ADD_GOSSIP_ITEM(2, "Krebs", GOSSIP_SENDER_MAIN, krebs);
-                        //player->ADD_GOSSIP_ITEM(2, "Krokodil", GOSSIP_SENDER_MAIN, krokolisk);
-                        //player->ADD_GOSSIP_ITEM(2, "Aasvogel", GOSSIP_SENDER_MAIN, aasvogel);
+                        player->ADD_GOSSIP_ITEM(2, "Krokodil", GOSSIP_SENDER_MAIN, krokolisk);
+                        player->ADD_GOSSIP_ITEM(2, "Aasvogel", GOSSIP_SENDER_MAIN, aasvogel);
                         player->ADD_GOSSIP_ITEM(2, "Hyaene", GOSSIP_SENDER_MAIN, hyaene);
                         player->ADD_GOSSIP_ITEM(2, "Katze (Tiger)", GOSSIP_SENDER_MAIN, katzetiger);
                         player->ADD_GOSSIP_ITEM(2, "Katze (Loewe)", GOSSIP_SENDER_MAIN, katzeloewe);
-                        //player->ADD_GOSSIP_ITEM(2, "Katze (Luchs)", GOSSIP_SENDER_MAIN, katzeluchs);
+                        player->ADD_GOSSIP_ITEM(2, "Katze (Luchs)", GOSSIP_SENDER_MAIN, katzeluchs);
                         player->ADD_GOSSIP_ITEM(2, "Raptor (Dolchrachenteufelsbrut)", GOSSIP_SENDER_MAIN, raptorgruen);
                         player->ADD_GOSSIP_ITEM(2, "Raptor (Blutsumpfkreischer)", GOSSIP_SENDER_MAIN, raptorrot);
                         player->ADD_GOSSIP_ITEM(2, "Weitschreiter", GOSSIP_SENDER_MAIN, weitschreiter);
                         player->ADD_GOSSIP_ITEM(2, "Wespe (Schwarzsichel)", GOSSIP_SENDER_MAIN, wesperot);
                         player->ADD_GOSSIP_ITEM(2, "Wespe (Saphirblaue Schwarmwespe)", GOSSIP_SENDER_MAIN, wespeblau);
                         player->ADD_GOSSIP_ITEM(2, "Wolf (Kriegshund der Zerschmetterten Hand)", GOSSIP_SENDER_MAIN, wolfruestung);
-                        //player->ADD_GOSSIP_ITEM(2, "Wolf (Wilder Worg)", GOSSIP_SENDER_MAIN, wolfgrau);
-                        //player->ADD_GOSSIP_ITEM(2, "Wolf (Blutdurstiger Tundrawolf)", GOSSIP_SENDER_MAIN, wolfwei?);
-                        //player->ADD_GOSSIP_ITEM(0, "I would prefer a exotic list...", GOSSIP_SENDER_MAIN, exotic);
+                        player->ADD_GOSSIP_ITEM(2, "Wolf (Wilder Worg)", GOSSIP_SENDER_MAIN, wolfgrau);
+                        player->ADD_GOSSIP_ITEM(2, "Wolf (Blutdurstiger Tundrawolf)", GOSSIP_SENDER_MAIN, wolfwei?);
+                        player->ADD_GOSSIP_ITEM(0, "I would prefer a exotic list...", GOSSIP_SENDER_MAIN, exotic);
  
                         player->SEND_GOSSIP_MENU(40011, creature->GetGUID());
                 break;
@@ -171,15 +170,13 @@ player->PlayerTalkClass->ClearMenus();
                         player->ADD_GOSSIP_ITEM(2, "Loque'nahak", GOSSIP_SENDER_MAIN, loque);
                         player->ADD_GOSSIP_ITEM(2, "Gondria", GOSSIP_SENDER_MAIN, gondria);
                         player->ADD_GOSSIP_ITEM(2, "Arcturis", GOSSIP_SENDER_MAIN, arcturis);
-                        //player->ADD_GOSSIP_ITEM(0, "I would prefer a non-exotic list...", GOSSIP_SENDER_MAIN, pets);
+                        player->ADD_GOSSIP_ITEM(0, "I would prefer a non-exotic list...", GOSSIP_SENDER_MAIN, pets);
                        
                         player->SEND_GOSSIP_MENU(40011, creature->GetGUID());
                 break;
-                /*
-                case felshetzer:
+				case felshetzer:
                         creature->SummonCreature(CREATURE_FELSHETZER, creature->GetPositionX()+4, creature->GetPositionY(), creature->GetPositionZ()+2, 0, TEMPSUMMON_TIMED_DESPAWN, 60000);
                         player->CLOSE_GOSSIP_MENU(); break;
-                */
                 case fledermaus:
 					if (player->GetMoney() < PRICE_PET_TYP_1)
 					{
@@ -239,7 +236,6 @@ player->PlayerTalkClass->ClearMenus();
 					}
 					player->CLOSE_GOSSIP_MENU();
 					break;					
-                /*      
                 case schlange:
 					if (player->GetMoney() < PRICE_PET_TYP_1)
 					{
@@ -251,7 +247,6 @@ player->PlayerTalkClass->ClearMenus();
 					}
 					player->CLOSE_GOSSIP_MENU();
 					break;						
-                */      
                 case spinne:
 					if (player->GetMoney() < PRICE_PET_TYP_1)
 					{
@@ -335,7 +330,6 @@ player->PlayerTalkClass->ClearMenus();
 					}
 					player->CLOSE_GOSSIP_MENU();
 					break;						
-                        /*
                 case katzeluchs:
 					if (player->GetMoney() < PRICE_PET_TYP_1)
 					{
@@ -347,7 +341,6 @@ player->PlayerTalkClass->ClearMenus();
 					}
 					player->CLOSE_GOSSIP_MENU();
 					break;						
-                        */
                 case raptorgruen:
 					if (player->GetMoney() < PRICE_PET_TYP_1)
 					{

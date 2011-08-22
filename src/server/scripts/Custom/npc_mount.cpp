@@ -20,9 +20,9 @@ REPLACE INTO `creature_template` (`entry`, `difficulty_entry_1`, `difficulty_ent
 
 #include "ScriptPCH.h"
 
-#define MSG_GOSSIP_TEXT_MOUNT           "Rent a mount"
-#define MSG_HI_LEVEL                    "Your level is to high"
-#define MSG_MOUTED                      "You already use a mount"
+#define MSG_GOSSIP_TEXT_MOUNT           "Арендовать маунта"
+#define MSG_HI_LEVEL                    "Ваш уровень слишком высокий"
+#define MSG_MOUTED                      "Вы уже используете маунта"
 #define MOUNT_SPELL_MOUNT               64657
 
 

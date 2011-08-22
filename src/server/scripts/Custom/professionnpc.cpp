@@ -36,7 +36,7 @@ bool OnGossipHello(Player* pPlayer, Creature* pCreature)
 	if(sConfig->GetBoolDefault("ProfessionNPC.OnlyGMs", false)) // If ProfessionNPC.OnlyGMs is enabled in trinitycore.conf
 		if (pPlayer->GetSession()->GetSecurity() == SEC_PLAYER)
 		{
-			pCreature->MonsterWhisper("Sorry, I can only trade to game masters.", pPlayer->GetGUID());
+			pCreature->MonsterWhisper("Извини, Я могу обмениваться только с ГМ.", pPlayer->GetGUID());
 			return true;
 		}
 
@@ -48,19 +48,19 @@ bool OnGossipHello(Player* pPlayer, Creature* pCreature)
 	{
 	// Check config if "Professions" is enabled or not
 	if(EnableProfessions)
-		pPlayer->ADD_GOSSIP_ITEM( 7, "Professions ->"        , GOSSIP_SENDER_MAIN, 1000);
+		pPlayer->ADD_GOSSIP_ITEM( 7, "Профессии ->"        , GOSSIP_SENDER_MAIN, 1000);
 	// Check config if "Secondary Skills" is enabled or not
 	if(EnableSecondarySkills)
-		pPlayer->ADD_GOSSIP_ITEM( 7, "Secondary Skills ->"   , GOSSIP_SENDER_MAIN, 2000);
+		pPlayer->ADD_GOSSIP_ITEM( 7, "Вспомогательные навыки ->"   , GOSSIP_SENDER_MAIN, 2000);
 	}
 	else // Main Menu for Horde
 	{
 	// Check config if "Professions" is enabled or not
 	if(EnableProfessions)
-		pPlayer->ADD_GOSSIP_ITEM( 7, "Professions ->"        , GOSSIP_SENDER_MAIN, 1000);
+		pPlayer->ADD_GOSSIP_ITEM( 7, "Профессии ->"        , GOSSIP_SENDER_MAIN, 1000);
 	// Check config if "Secondary Skills" is enabled or not
 	if(EnableSecondarySkills)
-		pPlayer->ADD_GOSSIP_ITEM( 7, "Secondary Skills ->"   , GOSSIP_SENDER_MAIN, 2000);
+		pPlayer->ADD_GOSSIP_ITEM( 7, "Вспомогательные навыки ->"   , GOSSIP_SENDER_MAIN, 2000);
 	}
 
     pPlayer->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,pCreature->GetGUID());
@@ -75,7 +75,7 @@ void SendDefaultMenu(Player* pPlayer, Creature* pCreature, uint32 uiAction)
 if (pPlayer->isInCombat())
 {
     pPlayer->CLOSE_GOSSIP_MENU();
-    pCreature->MonsterSay("You are in combat!", LANG_UNIVERSAL, NULL);
+    pCreature->MonsterSay("Вы находитесь в бою!", LANG_UNIVERSAL, NULL);
 	return;
 }
 
@@ -86,7 +86,7 @@ if (pPlayer->isInCombat())
 if (pPlayer->GetMoney() < (sConfig->GetFloatDefault("SkillGoldCost",0)))
 {
     pPlayer->CLOSE_GOSSIP_MENU();
-    pCreature->MonsterWhisper("You don't have enough money.", pPlayer->GetGUID());
+    pCreature->MonsterWhisper("У вас не достаточно денег.", pPlayer->GetGUID());
 	return;
 }
 
@@ -94,28 +94,28 @@ switch(uiAction)
 {
 
 case 1000: //Profession
-            pPlayer->ADD_GOSSIP_ITEM( 5, "10 points in Alchemy."              , GOSSIP_SENDER_MAIN, 1001);
-            pPlayer->ADD_GOSSIP_ITEM( 5, "10 points in Blacksmithing."        , GOSSIP_SENDER_MAIN, 1002);
-            pPlayer->ADD_GOSSIP_ITEM( 5, "10 points in Enchanting."           , GOSSIP_SENDER_MAIN, 1003);
-            pPlayer->ADD_GOSSIP_ITEM( 5, "10 points in Engineering."          , GOSSIP_SENDER_MAIN, 1004);
-            pPlayer->ADD_GOSSIP_ITEM( 5, "10 points in Herbalism."            , GOSSIP_SENDER_MAIN, 1005);
-            pPlayer->ADD_GOSSIP_ITEM( 5, "10 points in Inscription."          , GOSSIP_SENDER_MAIN, 1006);
-            pPlayer->ADD_GOSSIP_ITEM( 5, "10 points in Jewelcrafting."        , GOSSIP_SENDER_MAIN, 1007);
-            pPlayer->ADD_GOSSIP_ITEM( 5, "10 points in Leatherworking."       , GOSSIP_SENDER_MAIN, 1008);
-            pPlayer->ADD_GOSSIP_ITEM( 5, "10 points in Mining."               , GOSSIP_SENDER_MAIN, 1009);
-            pPlayer->ADD_GOSSIP_ITEM( 5, "10 points in Skinning."             , GOSSIP_SENDER_MAIN, 1010);
-            pPlayer->ADD_GOSSIP_ITEM( 5, "10 points in Tailoring."            , GOSSIP_SENDER_MAIN, 1011);
-            pPlayer->ADD_GOSSIP_ITEM( 7, "<- Main Menu"          , GOSSIP_SENDER_MAIN, 3000);
+            pPlayer->ADD_GOSSIP_ITEM( 5, "+10 к Алхимии"              , GOSSIP_SENDER_MAIN, 1001);
+            pPlayer->ADD_GOSSIP_ITEM( 5, "+10 к Кузнечному делу"        , GOSSIP_SENDER_MAIN, 1002);
+            pPlayer->ADD_GOSSIP_ITEM( 5, "+10 к Зачарованию"           , GOSSIP_SENDER_MAIN, 1003);
+            pPlayer->ADD_GOSSIP_ITEM( 5, "+10 к Инженерии"          , GOSSIP_SENDER_MAIN, 1004);
+            pPlayer->ADD_GOSSIP_ITEM( 5, "+10 к Сбору трав"            , GOSSIP_SENDER_MAIN, 1005);
+            pPlayer->ADD_GOSSIP_ITEM( 5, "+10 к Начертанию"          , GOSSIP_SENDER_MAIN, 1006);
+            pPlayer->ADD_GOSSIP_ITEM( 5, "+10 к Ювелирному делу"        , GOSSIP_SENDER_MAIN, 1007);
+            pPlayer->ADD_GOSSIP_ITEM( 5, "+10 к Кожевничеству"       , GOSSIP_SENDER_MAIN, 1008);
+            pPlayer->ADD_GOSSIP_ITEM( 5, "+10 к Горному делу"               , GOSSIP_SENDER_MAIN, 1009);
+            pPlayer->ADD_GOSSIP_ITEM( 5, "+10 к Снятию шкур"             , GOSSIP_SENDER_MAIN, 1010);
+            pPlayer->ADD_GOSSIP_ITEM( 5, "+10 к Шитью"            , GOSSIP_SENDER_MAIN, 1011);
+            pPlayer->ADD_GOSSIP_ITEM( 7, "<- Главное меню"          , GOSSIP_SENDER_MAIN, 3000);
 
 	pPlayer->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,pCreature->GetGUID());
 break;
 
 case 2000: //Secondary Skills
-            pPlayer->ADD_GOSSIP_ITEM( 5, "Cooking."              , GOSSIP_SENDER_MAIN, 2001);
-            pPlayer->ADD_GOSSIP_ITEM( 5, "First Aid."            , GOSSIP_SENDER_MAIN, 2002);
-            pPlayer->ADD_GOSSIP_ITEM( 5, "Fishing."              , GOSSIP_SENDER_MAIN, 2003);
-          //pPlayer->ADD_GOSSIP_ITEM( 5, "Riding."               , GOSSIP_SENDER_MAIN, 2004);
-            pPlayer->ADD_GOSSIP_ITEM( 7, "<- Main Menu"          , GOSSIP_SENDER_MAIN, 3000);
+            pPlayer->ADD_GOSSIP_ITEM( 5, "Кулинария"              , GOSSIP_SENDER_MAIN, 2001);
+            pPlayer->ADD_GOSSIP_ITEM( 5, "Первая помощь"            , GOSSIP_SENDER_MAIN, 2002);
+            pPlayer->ADD_GOSSIP_ITEM( 5, "Рыболовство"              , GOSSIP_SENDER_MAIN, 2003);
+            pPlayer->ADD_GOSSIP_ITEM( 5, "Верховая езда"               , GOSSIP_SENDER_MAIN, 2004);
+            pPlayer->ADD_GOSSIP_ITEM( 7, "<- Главное меню"          , GOSSIP_SENDER_MAIN, 3000);
 
 	pPlayer->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,pCreature->GetGUID());
 break;
@@ -126,19 +126,19 @@ case 3000: //Back To Main Menu
 	{
 	// Check config if "Professions" is enabled or not
 	if(EnableProfessions)
-		pPlayer->ADD_GOSSIP_ITEM( 7, "Professions ->"        , GOSSIP_SENDER_MAIN, 1000);
+		pPlayer->ADD_GOSSIP_ITEM( 7, "Профессии ->"        , GOSSIP_SENDER_MAIN, 1000);
 	// Check config if "Secondary Skills" is enabled or not
 	if(EnableSecondarySkills)
-		pPlayer->ADD_GOSSIP_ITEM( 7, "Secondary Skills ->"   , GOSSIP_SENDER_MAIN, 2000);
+		pPlayer->ADD_GOSSIP_ITEM( 7, "Вспомогательные навыки ->"   , GOSSIP_SENDER_MAIN, 2000);
 	}
 	else // Main Menu for Horde
 	{
 	// Check config if "Professions" is enabled or not
 	if(EnableProfessions)
-		pPlayer->ADD_GOSSIP_ITEM( 7, "Professions ->"        , GOSSIP_SENDER_MAIN, 1000);
+		pPlayer->ADD_GOSSIP_ITEM( 7, "Профессии ->"        , GOSSIP_SENDER_MAIN, 1000);
 	// Check config if "Secondary Skills" is enabled or not
 	if(EnableSecondarySkills)
-		pPlayer->ADD_GOSSIP_ITEM( 7, "Secondary Skills ->"   , GOSSIP_SENDER_MAIN, 2000);
+		pPlayer->ADD_GOSSIP_ITEM( 7, "Вспомогательные навыки ->"   , GOSSIP_SENDER_MAIN, 2000);
 	}
 
 	pPlayer->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,pCreature->GetGUID());
@@ -149,7 +149,7 @@ break;
 case 1001: // Alchemy
 	if(!pPlayer->UpdateSkill(171,0))
       {
-		pCreature->MonsterWhisper("You don't have this skill or you allready have the maximum skill value $C.", pPlayer->GetGUID());
+		pCreature->MonsterWhisper("Вы не знаете этой профессии или же уже полностью выучили $C.", pPlayer->GetGUID());
 		OnGossipHello(pPlayer, pCreature);
 		return;
 	}
@@ -162,7 +162,7 @@ break;
 case 1002: // Blacksmithing
 	if(!pPlayer->UpdateSkill(164,0))
       {
-		pCreature->MonsterWhisper("You don't have this skill or you allready have the maximum skill value $C.", pPlayer->GetGUID());
+		pCreature->MonsterWhisper("Вы не знаете этой профессии или же уже полностью выучили $C.", pPlayer->GetGUID());
 		OnGossipHello(pPlayer, pCreature);
 		return;
 	}
@@ -175,7 +175,7 @@ break;
 case 1003: // Enchanting
 	if(!pPlayer->UpdateSkill(333,0))
       {
-		pCreature->MonsterWhisper("You don't have this skill or you allready have the maximum skill value $C.", pPlayer->GetGUID());
+		pCreature->MonsterWhisper("Вы не знаете этой профессии или же уже полностью выучили $C.", pPlayer->GetGUID());
 		OnGossipHello(pPlayer, pCreature);
 		return;
 	}
@@ -188,7 +188,7 @@ break;
 case 1004: // Engineering
 	if(!pPlayer->UpdateSkill(202,0))
       {
-		pCreature->MonsterWhisper("You don't have this skill or you allready have the maximum skill value $C.", pPlayer->GetGUID());
+		pCreature->MonsterWhisper("Вы не знаете этой профессии или же уже полностью выучили $C.", pPlayer->GetGUID());
 		OnGossipHello(pPlayer, pCreature);
 		return;
 	}
@@ -201,7 +201,7 @@ break;
 case 1005: // Herbalism
 	if(!pPlayer->UpdateSkill(182,0))
       {
-		pCreature->MonsterWhisper("You don't have this skill or you allready have the maximum skill value $C.", pPlayer->GetGUID());
+		pCreature->MonsterWhisper("Вы не знаете этой профессии или же уже полностью выучили $C.", pPlayer->GetGUID());
 		OnGossipHello(pPlayer, pCreature);
 		return;
 	}
@@ -214,7 +214,7 @@ break;
 case 1006: // Inscription
 	if(!pPlayer->UpdateSkill(773,0))
       {
-		pCreature->MonsterWhisper("You don't have this skill or you allready have the maximum skill value $C.", pPlayer->GetGUID());
+		pCreature->MonsterWhisper("Вы не знаете этой профессии или же уже полностью выучили $C.", pPlayer->GetGUID());
 		OnGossipHello(pPlayer, pCreature);
 		return;
 	}
@@ -227,7 +227,7 @@ break;
 case 1007: // Jewelcrafting
 	if(!pPlayer->UpdateSkill(755,0))
       {
-		pCreature->MonsterWhisper("You don't have this skill or you allready have the maximum skill value $C.", pPlayer->GetGUID());
+		pCreature->MonsterWhisper("Вы не знаете этой профессии или же уже полностью выучили $C.", pPlayer->GetGUID());
 		OnGossipHello(pPlayer, pCreature);
 		return;
 	}
@@ -240,7 +240,7 @@ break;
 case 1008: // Leatherworking
 	if(!pPlayer->UpdateSkill(165,0))
       {
-		pCreature->MonsterWhisper("You don't have this skill or you allready have the maximum skill value $C.", pPlayer->GetGUID());
+		pCreature->MonsterWhisper("Вы не знаете этой профессии или же уже полностью выучили $C.", pPlayer->GetGUID());
 		OnGossipHello(pPlayer, pCreature);
 		return;
 	}
@@ -253,7 +253,7 @@ break;
 case 1009: // Mining
 	if(!pPlayer->UpdateSkill(186,0))
       {
-		pCreature->MonsterWhisper("You don't have this skill or you allready have the maximum skill value $C.", pPlayer->GetGUID());
+		pCreature->MonsterWhisper("Вы не знаете этой профессии или же уже полностью выучили $C.", pPlayer->GetGUID());
 		OnGossipHello(pPlayer, pCreature);
 		return;
 	}
@@ -266,7 +266,7 @@ break;
 case 1010: // Skinning
 	if(!pPlayer->UpdateSkill(393,0))
       {
-		pCreature->MonsterWhisper("You don't have this skill or you allready have the maximum skill value $C.", pPlayer->GetGUID());
+		pCreature->MonsterWhisper("Вы не знаете этой профессии или же уже полностью выучили $C.", pPlayer->GetGUID());
 		OnGossipHello(pPlayer, pCreature);
 		return;
 	}
@@ -279,7 +279,7 @@ break;
 case 1011: // Tailoring
 	if(!pPlayer->UpdateSkill(197,0))
       {
-		pCreature->MonsterWhisper("You don't have this skill or you allready have the maximum skill value $C.", pPlayer->GetGUID());
+		pCreature->MonsterWhisper("Вы не знаете этой профессии или же уже полностью выучили $C.", pPlayer->GetGUID());
 		OnGossipHello(pPlayer, pCreature);
 		return;
 	}
@@ -294,7 +294,7 @@ break;
 case 2001: // Cooking
 	if(!pPlayer->UpdateSkill(185,0))
       {
-		pCreature->MonsterWhisper("You don't have this skill or you allready have the maximum skill value $C.", pPlayer->GetGUID());
+		pCreature->MonsterWhisper("Вы не знаете этой профессии или же уже полностью выучили $C.", pPlayer->GetGUID());
 		OnGossipHello(pPlayer, pCreature);
 		return;
 	}
@@ -307,7 +307,7 @@ break;
 case 2002: // First Aid
 	if(!pPlayer->UpdateSkill(129,0))
       {
-		pCreature->MonsterWhisper("You don't have this skill or you allready have the maximum skill value $C.", pPlayer->GetGUID());
+		pCreature->MonsterWhisper("Вы не знаете этой профессии или же уже полностью выучили $C.", pPlayer->GetGUID());
 		OnGossipHello(pPlayer, pCreature);
 		return;
 	}
@@ -320,7 +320,7 @@ break;
 case 2003: // Fishing
 	if(!pPlayer->UpdateSkill(356,0))
       {
-		pCreature->MonsterWhisper("You don't have this skill or you allready have the maximum skill value $C.", pPlayer->GetGUID());
+		pCreature->MonsterWhisper("Вы не знаете этой профессии или же уже полностью выучили $C.", pPlayer->GetGUID());
 		OnGossipHello(pPlayer, pCreature);
 		return;
 	}
@@ -330,18 +330,18 @@ case 2003: // Fishing
 	pPlayer->CLOSE_GOSSIP_MENU();
 break;
 
-//case 2004: // Riding
-//	if(!pPlayer->UpdateSkill(,0))
-//    {
-//		pCreature->MonsterWhisper("You don't have this skill or you allready have the maximum skill value $C.", pPlayer->GetGUID());
-//		OnGossipHello(pPlayer, pCreature);
-//		return;
-//	}
-//
-//	pPlayer->UpdateSkill(,(sConfig->GetFloatDefault("SkillPoints",0)));
-//	pPlayer->ModifyMoney(-(sConfig->GetFloatDefault("SkillGoldCost",0)));
-//	pPlayer->CLOSE_GOSSIP_MENU();
-//break;
+case 2004: // Riding
+	if(!pPlayer->UpdateSkill(,0))
+    {
+		pCreature->MonsterWhisper("Вы не знаете этой профессии или же уже полностью выучили $C.", pPlayer->GetGUID());
+		OnGossipHello(pPlayer, pCreature);
+		return;
+	}
+
+	pPlayer->UpdateSkill(,(sConfig->GetFloatDefault("SkillPoints",0)));
+	pPlayer->ModifyMoney(-(sConfig->GetFloatDefault("SkillGoldCost",0)));
+	pPlayer->CLOSE_GOSSIP_MENU();
+	break;
 
  pPlayer->CLOSE_GOSSIP_MENU();
 
