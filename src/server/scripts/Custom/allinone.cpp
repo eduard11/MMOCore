@@ -5,7 +5,7 @@
 /* ScriptData
 SDName: pryds_allinone
 SD%Complete: 100
-SDComment: Buff Master Profession SkillUp Trainers
+SDComment: Buff Master Profession SkillUp Тренеры
 SDCategory: NPC
 EndScriptData */
 
@@ -49,7 +49,7 @@ bool OnGossipHello(Player  *player, Creature* pCreature)
 
 	bool EnableBuffs = sConfig->GetBoolDefault("pryds_allinone.EnableBuffs", true);
 	bool EnableProfessionsSkillUp = sConfig->GetBoolDefault("pryds_allinone.EnableProfessionsSkillUp", true);
-	bool EnableTrainers = sConfig->GetBoolDefault("pryds_allinone.EnableTrainers", true);
+	bool EnableТренеры = sConfig->GetBoolDefault("pryds_allinone.EnableТренеры", true);
 	bool EnableBots = sConfig->GetBoolDefault("pryds_allinone.EnableBots", true);
 	bool EnablePlayerTools = sConfig->GetBoolDefault("pryds_allinone.EnablePlayerTools", true);
 	bool EnableRemoveResSickness = sConfig->GetBoolDefault("pryds_allinone.EnableRemoveResSickness", true);
@@ -58,43 +58,40 @@ bool OnGossipHello(Player  *player, Creature* pCreature)
 	// Main Menu for Alliance
     if (player->GetTeam() == ALLIANCE)
 	{
-	// Buffs
+	//Бафы
 	if (EnableBuffs)
-		player->ADD_GOSSIP_ITEM(2, " Buffs ->"  		       	  , GOSSIP_SENDER_MAIN, 100);
-	// EnableTrainers
-	if (EnableTrainers)
-		player->ADD_GOSSIP_ITEM(3, "Trainers ->"  			  , GOSSIP_SENDER_MAIN, 300);
-	// Bots
-	if (EnableBots)
-		player->ADD_GOSSIP_ITEM(3, "Bots ->"  				  , GOSSIP_SENDER_MAIN, 600);
+		player->ADD_GOSSIP_ITEM(2, " Бафы ->"  		       	  , GOSSIP_SENDER_MAIN, 100);
+	// EnableТренеры
+	if (EnableТренеры)
+		player->ADD_GOSSIP_ITEM(3, "Тренеры ->"  			  , GOSSIP_SENDER_MAIN, 300);
 	// Check config if "Player Tools" is enabled or not
 	if (EnablePlayerTools)
 		player->ADD_GOSSIP_ITEM(8, "Player Tools ->"            , GOSSIP_SENDER_MAIN, 4000);
 		// Check config if "Morph" is enabled or not
 	if (EnableMorph)
-		player->ADD_GOSSIP_ITEM(4, "Morph ->"       			  , GOSSIP_SENDER_MAIN, 700);
+		player->ADD_GOSSIP_ITEM(4, "Морфы ->"       			  , GOSSIP_SENDER_MAIN, 700);
 
 	}
 	else // Main Menu for Horde
 	{
-	// Buffs
+	//Бафы
 	if (EnableBuffs)
-		player->ADD_GOSSIP_ITEM(2, " Buffs ->"  		       	  , GOSSIP_SENDER_MAIN, 100);
-	// EnableTrainers
-	if (EnableTrainers)
-		player->ADD_GOSSIP_ITEM(3, "Trainers ->"  			  , GOSSIP_SENDER_MAIN, 300);
+		player->ADD_GOSSIP_ITEM(2, " Бафы ->"  		       	  , GOSSIP_SENDER_MAIN, 100);
+	// EnableТренеры
+	if (EnableТренеры)
+		player->ADD_GOSSIP_ITEM(3, "Тренеры ->"  			  , GOSSIP_SENDER_MAIN, 300);
 	// Check config if "Player Tools" is enabled or not
 	if (EnablePlayerTools)
 		player->ADD_GOSSIP_ITEM(8, "Player Tools ->"            , GOSSIP_SENDER_MAIN, 4000);
 	// Check config if "Morph" is enabled or not
 	if (EnableMorph)
-		player->ADD_GOSSIP_ITEM(4, "Morph ->"       			  , GOSSIP_SENDER_MAIN, 700);
+		player->ADD_GOSSIP_ITEM(4, "Морфы ->"       			  , GOSSIP_SENDER_MAIN, 700);
 
 	}
 
 	// Check config file if "Remove res sickness" option is enabled or not
 	if (EnableRemoveResSickness)
-		player->ADD_GOSSIP_ITEM(9, "Remove Resurrect Sickness" , GOSSIP_SENDER_MAIN, 7000);
+		player->ADD_GOSSIP_ITEM(9, "Снять все вредоносные заклинания" , GOSSIP_SENDER_MAIN, 7000);
 
     player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,pCreature->GetGUID());
 
@@ -108,7 +105,7 @@ void SendDefaultMenu_pryds_allinone(Player  *player, Creature* pCreature, uint32
 if (player->isInCombat())
 {
     player->CLOSE_GOSSIP_MENU();
-    pCreature->MonsterSay("You are in combat!", LANG_UNIVERSAL, NULL);
+    pCreature->MonsterSay("Вы находитесь в бою!", LANG_UNIVERSAL, NULL);
 	return;
 }
 
@@ -120,9 +117,9 @@ if (!sConfig->SetSource(_TRINITY_CORE_CONFIG))
 	bool EnableSmallBuff = sConfig->GetBoolDefault("pryds_allinone.EnableSmallBuff", true);
 	bool EnableGreatBuff = sConfig->GetBoolDefault("pryds_allinone.EnableGreatBuff", true);
 	bool EnableGMBuff = sConfig->GetBoolDefault("pryds_allinone.EnableGMBuff", true);
-	bool EnableTrainers = sConfig->GetBoolDefault("pryds_allinone.EnableTrainers", true);
-	bool EnableClassTrainers = sConfig->GetBoolDefault("pryds_allinone.EnableClassTrainers", true);
-	bool EnableProfessionsTrainers = sConfig->GetBoolDefault("pryds_allinone.EnableProfessionsTrainers", true);
+	bool EnableТренеры = sConfig->GetBoolDefault("pryds_allinone.EnableТренеры", true);
+	bool EnableClassТренеры = sConfig->GetBoolDefault("pryds_allinone.EnableClassТренеры", true);
+	bool EnableProfessionsТренеры = sConfig->GetBoolDefault("pryds_allinone.EnableProfessionsТренеры", true);
 	bool EnablePlayerTools = sConfig->GetBoolDefault("pryds_allinone.EnablePlayerTools", true);
 	bool EnableRemoveResSickness = sConfig->GetBoolDefault("pryds_allinone.EnableRemoveResSickness", true);
 	bool EnableGivemeGold = sConfig->GetBoolDefault("pryds_allinone.EnableGivemeGold", true);
@@ -134,21 +131,21 @@ if (!sConfig->SetSource(_TRINITY_CORE_CONFIG))
 if (player->GetMoney() < (sConfig->GetFloatDefault("pryds_allinoneBuffGoldCost",0)))
 {
     player->CLOSE_GOSSIP_MENU();
-    pCreature->MonsterWhisper("You don't have enough money.", player->GetGUID());
+    pCreature->MonsterWhisper("У вас не достаточно денег.", player->GetGUID());
 	return;
 }
 
 switch(uiAction)
 {
 
-case 100: // Buffs
+case 100: //Бафы
 	if (EnableSmallBuff)
 		player->ADD_GOSSIP_ITEM(2, "Small Buff ->"   			               , GOSSIP_SENDER_MAIN, 1000);
 	if (EnableGreatBuff)
 		player->ADD_GOSSIP_ITEM(2, "Great Buff ->"                           , GOSSIP_SENDER_MAIN, 2000);
 	if (EnableGMBuff)
-		player->ADD_GOSSIP_ITEM(2, "GM Buff ->"    			               , GOSSIP_SENDER_MAIN, 3100);
-		player->ADD_GOSSIP_ITEM(7, "<- Main Menu"                            , GOSSIP_SENDER_MAIN, 5005);
+		player->ADD_GOSSIP_ITEM(2, "ГМ бафы ->"    			               , GOSSIP_SENDER_MAIN, 3100);
+		player->ADD_GOSSIP_ITEM(7, "<- Главное меню"                            , GOSSIP_SENDER_MAIN, 5005);
 
 	player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,pCreature->GetGUID());
 break;
@@ -156,41 +153,41 @@ break;
 case 200: //Professions SkillUp
 	// Check config if "EnableProfessions" is enabled or not
 	if (EnableProfessions)
-		player->ADD_GOSSIP_ITEM(3, "Professions ->"       				   , GOSSIP_SENDER_MAIN, 3000);
+		player->ADD_GOSSIP_ITEM(3, "Профессии ->"       				   , GOSSIP_SENDER_MAIN, 3000);
 	// Check config if "EnableSecondarySkills" is enabled or not
 	if (EnableSecondarySkills)
-		player->ADD_GOSSIP_ITEM(3, "Secondary Skills ->"  				   , GOSSIP_SENDER_MAIN, 6000);
-		player->ADD_GOSSIP_ITEM(7, "<- Main Menu"                            , GOSSIP_SENDER_MAIN, 5005);
+		player->ADD_GOSSIP_ITEM(3, "Вспомогательные навыки ->"  				   , GOSSIP_SENDER_MAIN, 6000);
+		player->ADD_GOSSIP_ITEM(7, "<- Главное меню"                            , GOSSIP_SENDER_MAIN, 5005);
 
 	player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,pCreature->GetGUID());
 break;
 
-case 300: //Trainers
-	// Check config if "Class Trainers" is enabled or not
-	if (EnableClassTrainers)
-		player->ADD_GOSSIP_ITEM(3, "Class Trainers ->"       			       , GOSSIP_SENDER_MAIN, 400);
-	// Check config if "Profession Trainers" is enabled or not
-	if (EnableProfessionsTrainers)
-		player->ADD_GOSSIP_ITEM(3, "Professions Trainers ->" 				   , GOSSIP_SENDER_MAIN, 500);
+case 300: //Тренеры
+	// Check config if "Class Тренеры" is enabled or not
+	if (EnableClassТренеры)
+		player->ADD_GOSSIP_ITEM(3, "Классовые тренеры ->"       			       , GOSSIP_SENDER_MAIN, 400);
+	// Check config if "Profession Тренеры" is enabled or not
+	if (EnableProfessionsТренеры)
+		player->ADD_GOSSIP_ITEM(3, "Тренеры профессий ->" 				   , GOSSIP_SENDER_MAIN, 500);
 	// Professions Skillup
 	if (EnableProfessionsSkillUp)
-		player->ADD_GOSSIP_ITEM(3, "Professions SkillUp ->"  				   , GOSSIP_SENDER_MAIN, 200);
-		player->ADD_GOSSIP_ITEM(3, "Mount Trainer"       					   , GOSSIP_SENDER_MAIN, 634);
-		player->ADD_GOSSIP_ITEM(3, "Stable Master"  				           , GOSSIP_SENDER_MAIN, 612);
-		player->ADD_GOSSIP_ITEM(3, "Weapon Master"  				           , GOSSIP_SENDER_MAIN, 613);
-		player->ADD_GOSSIP_ITEM(3, "Max Weapon Skill"    				       , GOSSIP_SENDER_MAIN, 4026);
-		player->ADD_GOSSIP_ITEM(7, "<- Main Menu"                	           , GOSSIP_SENDER_MAIN, 5005);
+		player->ADD_GOSSIP_ITEM(3, "Повышение навыка профессии ->"  				   , GOSSIP_SENDER_MAIN, 200);
+		player->ADD_GOSSIP_ITEM(3, "Тренер маунтов"       					   , GOSSIP_SENDER_MAIN, 634);
+		player->ADD_GOSSIP_ITEM(3, "Стойла"  				           , GOSSIP_SENDER_MAIN, 612);
+		player->ADD_GOSSIP_ITEM(3, "Оружейный мастер"  				           , GOSSIP_SENDER_MAIN, 613);
+		player->ADD_GOSSIP_ITEM(3, "Максимальный навык владение оружием"    				       , GOSSIP_SENDER_MAIN, 4026);
+		player->ADD_GOSSIP_ITEM(7, "<- Главное меню"                	           , GOSSIP_SENDER_MAIN, 5005);
 
 	player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,pCreature->GetGUID());
 break;
 
 case 700: //Morph
-		player->ADD_GOSSIP_ITEM(4, "Famous ->"   		    			       , GOSSIP_SENDER_MAIN, 710);
-		player->ADD_GOSSIP_ITEM(4, "Funny ->" 							   , GOSSIP_SENDER_MAIN, 750);
-		player->ADD_GOSSIP_ITEM(4, "Make me Bigger ->" 					   , GOSSIP_SENDER_MAIN, 771);
-		player->ADD_GOSSIP_ITEM(4, "Make me Smaller ->" 					   , GOSSIP_SENDER_MAIN, 772);
-		player->ADD_GOSSIP_ITEM(4, "DeMorph ->" 							   , GOSSIP_SENDER_MAIN, 799);
-		player->ADD_GOSSIP_ITEM(7, "<- Main Menu"                	           , GOSSIP_SENDER_MAIN, 5005);
+		player->ADD_GOSSIP_ITEM(4, "Знаменитые ->"   		    			       , GOSSIP_SENDER_MAIN, 710);
+		player->ADD_GOSSIP_ITEM(4, "Смешные ->" 							   , GOSSIP_SENDER_MAIN, 750);
+		player->ADD_GOSSIP_ITEM(4, "Сделай меня больше ->" 					   , GOSSIP_SENDER_MAIN, 771);
+		player->ADD_GOSSIP_ITEM(4, "Сделай меня меньше ->" 					   , GOSSIP_SENDER_MAIN, 772);
+		player->ADD_GOSSIP_ITEM(4, "Деморф ->" 							   , GOSSIP_SENDER_MAIN, 799);
+		player->ADD_GOSSIP_ITEM(7, "<- Главное меню"                	           , GOSSIP_SENDER_MAIN, 5005);
 
 	player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,pCreature->GetGUID());
 break;
@@ -209,9 +206,9 @@ case 710: //Morph Famous
 		player->ADD_GOSSIP_ITEM(4, "Kael'thas Sunstrider ->" 				   , GOSSIP_SENDER_MAIN, 721);
 		player->ADD_GOSSIP_ITEM(4, "C'thun ->" 							   , GOSSIP_SENDER_MAIN, 722);
 		player->ADD_GOSSIP_ITEM(4, "Thrall ->" 							   , GOSSIP_SENDER_MAIN, 723);
-		player->ADD_GOSSIP_ITEM(4, "DeMorph ->" 							   , GOSSIP_SENDER_MAIN, 799);
-		player->ADD_GOSSIP_ITEM(7, "<- Back"       		                   , GOSSIP_SENDER_MAIN, 700);
-		player->ADD_GOSSIP_ITEM(7, "<- Main Menu"                	           , GOSSIP_SENDER_MAIN, 5005);
+		player->ADD_GOSSIP_ITEM(4, "DeМорфы ->" 							   , GOSSIP_SENDER_MAIN, 799);
+		player->ADD_GOSSIP_ITEM(7, "<- Назад"       		                   , GOSSIP_SENDER_MAIN, 700);
+		player->ADD_GOSSIP_ITEM(7, "<- Главное меню"                	           , GOSSIP_SENDER_MAIN, 5005);
 
 	player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,pCreature->GetGUID());
 break;
@@ -230,9 +227,9 @@ case 750: //Morph Funny
 		player->ADD_GOSSIP_ITEM(4, "A Rabbit ->" 	 		   			       , GOSSIP_SENDER_MAIN, 761);
 		player->ADD_GOSSIP_ITEM(4, "A Cool looking Bug ->"   			       , GOSSIP_SENDER_MAIN, 762);
 		player->ADD_GOSSIP_ITEM(4, "Eye Of C'thun ->"   	   			       , GOSSIP_SENDER_MAIN, 763);
-		player->ADD_GOSSIP_ITEM(4, "DeMorph ->" 							   , GOSSIP_SENDER_MAIN, 799);
-		player->ADD_GOSSIP_ITEM(7, "<- Back"       		                   , GOSSIP_SENDER_MAIN, 700);
-		player->ADD_GOSSIP_ITEM(7, "<- Main Menu"                	           , GOSSIP_SENDER_MAIN, 5005);
+		player->ADD_GOSSIP_ITEM(4, "DeМорфы ->" 							   , GOSSIP_SENDER_MAIN, 799);
+		player->ADD_GOSSIP_ITEM(7, "<- Назад"       		                   , GOSSIP_SENDER_MAIN, 700);
+		player->ADD_GOSSIP_ITEM(7, "<- Главное меню"                	           , GOSSIP_SENDER_MAIN, 5005);
 
 	player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,pCreature->GetGUID());
 break;
@@ -250,8 +247,8 @@ case 1000: //Small  Buff
 		player->ADD_GOSSIP_ITEM(2, "Buff me Divine Spirit"                   , GOSSIP_SENDER_MAIN, 1045);
 		player->ADD_GOSSIP_ITEM(2, "Buff me Power Word: Fortitude"           , GOSSIP_SENDER_MAIN, 1050);
 		player->ADD_GOSSIP_ITEM(2, "Buff me Shadow Protection"               , GOSSIP_SENDER_MAIN, 1055);
-		player->ADD_GOSSIP_ITEM(7, "<- Back"       		                   , GOSSIP_SENDER_MAIN, 100);
-		player->ADD_GOSSIP_ITEM(7, "<- Main Menu"                            , GOSSIP_SENDER_MAIN, 5005);
+		player->ADD_GOSSIP_ITEM(7, "<- Назад"       		                   , GOSSIP_SENDER_MAIN, 100);
+		player->ADD_GOSSIP_ITEM(7, "<- Главное меню"                            , GOSSIP_SENDER_MAIN, 5005);
 
 	player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,pCreature->GetGUID());
 break;
@@ -267,8 +264,8 @@ case 2000: //Great Buff
 		player->ADD_GOSSIP_ITEM(2, "Buff me Prayer of Fortitude"             , GOSSIP_SENDER_MAIN, 2035);
 		player->ADD_GOSSIP_ITEM(2, "Buff me Prayer of Shadow Protection"     , GOSSIP_SENDER_MAIN, 2040);
 		player->ADD_GOSSIP_ITEM(2, "Buff me Prayer of Spirit"                , GOSSIP_SENDER_MAIN, 2045);
-		player->ADD_GOSSIP_ITEM(7, "<- Back"       		                   , GOSSIP_SENDER_MAIN, 100);
-		player->ADD_GOSSIP_ITEM(7, "<- Main Menu"                            , GOSSIP_SENDER_MAIN, 5005);
+		player->ADD_GOSSIP_ITEM(7, "<- Назад"       		                   , GOSSIP_SENDER_MAIN, 100);
+		player->ADD_GOSSIP_ITEM(7, "<- Главное меню"                            , GOSSIP_SENDER_MAIN, 5005);
 
 	player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,pCreature->GetGUID());
 break;
@@ -283,8 +280,8 @@ case 3100: //GM  Buff
 		player->ADD_GOSSIP_ITEM(2, "Buff me Rising Spirit"                   , GOSSIP_SENDER_MAIN, 3030);
 		player->ADD_GOSSIP_ITEM(2, "Buff me Spirit of the Wind"              , GOSSIP_SENDER_MAIN, 3035);
 		player->ADD_GOSSIP_ITEM(2, "Buff me Wisdom of Agamaggan"             , GOSSIP_SENDER_MAIN, 3040);
-		player->ADD_GOSSIP_ITEM(7, "<- Back"       		                   , GOSSIP_SENDER_MAIN, 100);
-		player->ADD_GOSSIP_ITEM(7, "<- Main Menu"                            , GOSSIP_SENDER_MAIN, 5005);
+		player->ADD_GOSSIP_ITEM(7, "<- Назад"       		                   , GOSSIP_SENDER_MAIN, 100);
+		player->ADD_GOSSIP_ITEM(7, "<- Главное меню"                            , GOSSIP_SENDER_MAIN, 5005);
 
 	player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,pCreature->GetGUID());
 break;
@@ -292,83 +289,83 @@ break;
 case 4000: //Player Tools
 	// Check config if "Give me Gold" is enabled or not
 	if (EnableGivemeGold)
-		player->ADD_GOSSIP_ITEM(8, "Give me 5000 Gold"                       , GOSSIP_SENDER_MAIN, 4001);
+		player->ADD_GOSSIP_ITEM(8, "Дай мне 5000 голд"                       , GOSSIP_SENDER_MAIN, 4001);
 		player->ADD_GOSSIP_ITEM(8, "Give me Soul Shard"                     , GOSSIP_SENDER_MAIN, 4005);
-		player->ADD_GOSSIP_ITEM(8, "Heal me Please"                          , GOSSIP_SENDER_MAIN, 4010);
-		player->ADD_GOSSIP_ITEM(8, "Heal me and party members Please"        , GOSSIP_SENDER_MAIN, 4015);
+		player->ADD_GOSSIP_ITEM(8, "Вылечи меня пожалуйста"                          , GOSSIP_SENDER_MAIN, 4010);
+		player->ADD_GOSSIP_ITEM(8, "Вылечи меня и членов моей группы"        , GOSSIP_SENDER_MAIN, 4015);
 		player->ADD_GOSSIP_ITEM(8, "Conjure Level 80 Refreshment"            , GOSSIP_SENDER_MAIN, 4020);
 		player->ADD_GOSSIP_ITEM(8, "Conjure Mana Gem Level 77"               , GOSSIP_SENDER_MAIN, 4025);
-		player->ADD_GOSSIP_ITEM(8, "Drunk"   						           , GOSSIP_SENDER_MAIN, 4027);
-		player->ADD_GOSSIP_ITEM(8, "Sober"   						           , GOSSIP_SENDER_MAIN, 4028);
-		player->ADD_GOSSIP_ITEM(7, "<- Main Menu"                            , GOSSIP_SENDER_MAIN, 5005);
+		player->ADD_GOSSIP_ITEM(8, "Пьяный"   						           , GOSSIP_SENDER_MAIN, 4027);
+		player->ADD_GOSSIP_ITEM(8, "Трезвый"   						           , GOSSIP_SENDER_MAIN, 4028);
+		player->ADD_GOSSIP_ITEM(7, "<- Главное меню"                            , GOSSIP_SENDER_MAIN, 5005);
 
 	player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,pCreature->GetGUID());
 break;
 
-case 400: //Class Trainers
-		player->ADD_GOSSIP_ITEM(3, "Death Knight"               			   , GOSSIP_SENDER_MAIN, 601);
-		player->ADD_GOSSIP_ITEM(3, "Druid"                        		   , GOSSIP_SENDER_MAIN, 602);
-		player->ADD_GOSSIP_ITEM(3, "Hunter"                 				   , GOSSIP_SENDER_MAIN, 603);
-		player->ADD_GOSSIP_ITEM(3, "Mage"                 				   , GOSSIP_SENDER_MAIN, 604);
-		player->ADD_GOSSIP_ITEM(3, "Paladin"              				   , GOSSIP_SENDER_MAIN, 605);
-		player->ADD_GOSSIP_ITEM(3, "Priest"    	         			       , GOSSIP_SENDER_MAIN, 606);
-		player->ADD_GOSSIP_ITEM(3, "Rogue"               	 				   , GOSSIP_SENDER_MAIN, 607);
-		player->ADD_GOSSIP_ITEM(3, "Shaman"            					   , GOSSIP_SENDER_MAIN, 608);
-		player->ADD_GOSSIP_ITEM(3, "Warlock"         						   , GOSSIP_SENDER_MAIN, 609);
-		player->ADD_GOSSIP_ITEM(3, "Warrior"          				       , GOSSIP_SENDER_MAIN, 610);
-		player->ADD_GOSSIP_ITEM(3, "Hunter Pet"    					       , GOSSIP_SENDER_MAIN, 611);
-		player->ADD_GOSSIP_ITEM(7, "<- Back"       		                   , GOSSIP_SENDER_MAIN, 300);
-		player->ADD_GOSSIP_ITEM(7, "<- Main Menu"                            , GOSSIP_SENDER_MAIN, 5005);
+case 400: //Class Тренеры
+		player->ADD_GOSSIP_ITEM(3, "Рыцарь Смерти"               			   , GOSSIP_SENDER_MAIN, 601);
+		player->ADD_GOSSIP_ITEM(3, "Друид"                        		   , GOSSIP_SENDER_MAIN, 602);
+		player->ADD_GOSSIP_ITEM(3, "Охотник"                 				   , GOSSIP_SENDER_MAIN, 603);
+		player->ADD_GOSSIP_ITEM(3, "Маг"                 				   , GOSSIP_SENDER_MAIN, 604);
+		player->ADD_GOSSIP_ITEM(3, "Паладин"              				   , GOSSIP_SENDER_MAIN, 605);
+		player->ADD_GOSSIP_ITEM(3, "Жрец"    	         			       , GOSSIP_SENDER_MAIN, 606);
+		player->ADD_GOSSIP_ITEM(3, "Разбойник"               	 				   , GOSSIP_SENDER_MAIN, 607);
+		player->ADD_GOSSIP_ITEM(3, "Шаман"            					   , GOSSIP_SENDER_MAIN, 608);
+		player->ADD_GOSSIP_ITEM(3, "Чернокнижник"         						   , GOSSIP_SENDER_MAIN, 609);
+		player->ADD_GOSSIP_ITEM(3, "Воин"          				       , GOSSIP_SENDER_MAIN, 610);
+		player->ADD_GOSSIP_ITEM(3, "Питомцы охотника"    					       , GOSSIP_SENDER_MAIN, 611);
+		player->ADD_GOSSIP_ITEM(7, "<- Назад"       		                   , GOSSIP_SENDER_MAIN, 300);
+		player->ADD_GOSSIP_ITEM(7, "<- Главное меню"                            , GOSSIP_SENDER_MAIN, 5005);
 
 	player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,pCreature->GetGUID());
 break;
 
-case 500: //Profession Trainers
-		player->ADD_GOSSIP_ITEM(3, "Alchemy"      				           , GOSSIP_SENDER_MAIN, 620);
-		player->ADD_GOSSIP_ITEM(3, "Blacksmithing"                           , GOSSIP_SENDER_MAIN, 621);
-		player->ADD_GOSSIP_ITEM(3, "Enchanter"         			           , GOSSIP_SENDER_MAIN, 622);
-		player->ADD_GOSSIP_ITEM(3, "Engineering"           				   , GOSSIP_SENDER_MAIN, 623);
-		player->ADD_GOSSIP_ITEM(3, "Herbalism"             				   , GOSSIP_SENDER_MAIN, 624);
-		player->ADD_GOSSIP_ITEM(3, "Inscription"             			       , GOSSIP_SENDER_MAIN, 625);
-		player->ADD_GOSSIP_ITEM(3, "Jewelcrafting"            			   , GOSSIP_SENDER_MAIN, 626);
-		player->ADD_GOSSIP_ITEM(3, "Leatherworking"            			   , GOSSIP_SENDER_MAIN, 627);
-		player->ADD_GOSSIP_ITEM(3, "Mining"             					   , GOSSIP_SENDER_MAIN, 628);
-		player->ADD_GOSSIP_ITEM(3, "Skinning"                 			   , GOSSIP_SENDER_MAIN, 629);
-		player->ADD_GOSSIP_ITEM(3, "Tailoring"           					   , GOSSIP_SENDER_MAIN, 630);
-		player->ADD_GOSSIP_ITEM(3, "Cooking"               				   , GOSSIP_SENDER_MAIN, 631);
-		player->ADD_GOSSIP_ITEM(3, "First Aid"             				   , GOSSIP_SENDER_MAIN, 632);
-		player->ADD_GOSSIP_ITEM(3, "Fishing"               				   , GOSSIP_SENDER_MAIN, 633);
-		player->ADD_GOSSIP_ITEM(7, "<- Back"       		                   , GOSSIP_SENDER_MAIN, 300);
-		player->ADD_GOSSIP_ITEM(7, "<- Main Menu"                            , GOSSIP_SENDER_MAIN, 5005);
+case 500: //Profession Тренеры
+		player->ADD_GOSSIP_ITEM(3, "Алхимия"      				           , GOSSIP_SENDER_MAIN, 620);
+		player->ADD_GOSSIP_ITEM(3, "Кузнечество"                           , GOSSIP_SENDER_MAIN, 621);
+		player->ADD_GOSSIP_ITEM(3, "Зачарование"         			           , GOSSIP_SENDER_MAIN, 622);
+		player->ADD_GOSSIP_ITEM(3, "Инженерия"           				   , GOSSIP_SENDER_MAIN, 623);
+		player->ADD_GOSSIP_ITEM(3, "Сбор трав"             				   , GOSSIP_SENDER_MAIN, 624);
+		player->ADD_GOSSIP_ITEM(3, "Начертание"             			       , GOSSIP_SENDER_MAIN, 625);
+		player->ADD_GOSSIP_ITEM(3, "Ювелирное дело"            			   , GOSSIP_SENDER_MAIN, 626);
+		player->ADD_GOSSIP_ITEM(3, "Кожевничество"            			   , GOSSIP_SENDER_MAIN, 627);
+		player->ADD_GOSSIP_ITEM(3, "Горное дело"             					   , GOSSIP_SENDER_MAIN, 628);
+		player->ADD_GOSSIP_ITEM(3, "Снятие шкур"                 			   , GOSSIP_SENDER_MAIN, 629);
+		player->ADD_GOSSIP_ITEM(3, "Шитье"           					   , GOSSIP_SENDER_MAIN, 630);
+		player->ADD_GOSSIP_ITEM(3, "Кулинария"               				   , GOSSIP_SENDER_MAIN, 631);
+		player->ADD_GOSSIP_ITEM(3, "Первая помощь"             				   , GOSSIP_SENDER_MAIN, 632);
+		player->ADD_GOSSIP_ITEM(3, "Рыболовство"               				   , GOSSIP_SENDER_MAIN, 633);
+		player->ADD_GOSSIP_ITEM(7, "<- Назад"       		                   , GOSSIP_SENDER_MAIN, 300);
+		player->ADD_GOSSIP_ITEM(7, "<- Главное меню"                            , GOSSIP_SENDER_MAIN, 5005);
 
 	player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,pCreature->GetGUID());
 break;
 
 case 3000: //Profession
-            player->ADD_GOSSIP_ITEM(3, "Alchemy."              , GOSSIP_SENDER_MAIN, 1101);
-            player->ADD_GOSSIP_ITEM(3, "Blacksmithing."        , GOSSIP_SENDER_MAIN, 1102);
-            player->ADD_GOSSIP_ITEM(3, "Enchanting."           , GOSSIP_SENDER_MAIN, 1103);
-            player->ADD_GOSSIP_ITEM(3, "Engineering."          , GOSSIP_SENDER_MAIN, 1104);
-            player->ADD_GOSSIP_ITEM(3, "Herbalism."            , GOSSIP_SENDER_MAIN, 1105);
-            player->ADD_GOSSIP_ITEM(3, "Inscription."          , GOSSIP_SENDER_MAIN, 1106);
-            player->ADD_GOSSIP_ITEM(3, "Jewelcrafting."        , GOSSIP_SENDER_MAIN, 1107);
-            player->ADD_GOSSIP_ITEM(3, "Leatherworking."       , GOSSIP_SENDER_MAIN, 1108);
-            player->ADD_GOSSIP_ITEM(3, "Mining."               , GOSSIP_SENDER_MAIN, 1109);
-            player->ADD_GOSSIP_ITEM(3, "Skinning."             , GOSSIP_SENDER_MAIN, 1110);
-            player->ADD_GOSSIP_ITEM(3, "Tailoring."            , GOSSIP_SENDER_MAIN, 1111);
-			player->ADD_GOSSIP_ITEM(7, "<- Back"               , GOSSIP_SENDER_MAIN, 200);
-            player->ADD_GOSSIP_ITEM(7, "<- Main Menu"          , GOSSIP_SENDER_MAIN, 5005);
+            player->ADD_GOSSIP_ITEM(3, "Алхимия"              , GOSSIP_SENDER_MAIN, 1101);
+            player->ADD_GOSSIP_ITEM(3, "Кузнечество"        , GOSSIP_SENDER_MAIN, 1102);
+            player->ADD_GOSSIP_ITEM(3, "Зачарование"           , GOSSIP_SENDER_MAIN, 1103);
+            player->ADD_GOSSIP_ITEM(3, "Инденерия"          , GOSSIP_SENDER_MAIN, 1104);
+            player->ADD_GOSSIP_ITEM(3, "Сбор трав"            , GOSSIP_SENDER_MAIN, 1105);
+            player->ADD_GOSSIP_ITEM(3, "Начертание"          , GOSSIP_SENDER_MAIN, 1106);
+            player->ADD_GOSSIP_ITEM(3, "Ювелирное дело"        , GOSSIP_SENDER_MAIN, 1107);
+            player->ADD_GOSSIP_ITEM(3, "Кожевничество"       , GOSSIP_SENDER_MAIN, 1108);
+            player->ADD_GOSSIP_ITEM(3, "Горное дело"               , GOSSIP_SENDER_MAIN, 1109);
+            player->ADD_GOSSIP_ITEM(3, "Снятие шкур"             , GOSSIP_SENDER_MAIN, 1110);
+            player->ADD_GOSSIP_ITEM(3, "Шитье"            , GOSSIP_SENDER_MAIN, 1111);
+			player->ADD_GOSSIP_ITEM(7, "<- Назад"               , GOSSIP_SENDER_MAIN, 200);
+            player->ADD_GOSSIP_ITEM(7, "<- Главное меню"          , GOSSIP_SENDER_MAIN, 5005);
 
 	player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,pCreature->GetGUID());
 break;
 
 case 6000: //Secondary Skills
-            player->ADD_GOSSIP_ITEM(3, "Cooking."              , GOSSIP_SENDER_MAIN, 2101);
-            player->ADD_GOSSIP_ITEM(3, "First Aid."            , GOSSIP_SENDER_MAIN, 2102);
-            player->ADD_GOSSIP_ITEM(3, "Fishing."              , GOSSIP_SENDER_MAIN, 2103);
-          //player->ADD_GOSSIP_ITEM(3, "Riding."               , GOSSIP_SENDER_MAIN, 2104);
-			player->ADD_GOSSIP_ITEM(7, "<- Back"               , GOSSIP_SENDER_MAIN, 200);
-            player->ADD_GOSSIP_ITEM(7, "<- Main Menu"          , GOSSIP_SENDER_MAIN, 5005);
+            player->ADD_GOSSIP_ITEM(3, "Кулинария"              , GOSSIP_SENDER_MAIN, 2101);
+            player->ADD_GOSSIP_ITEM(3, "Первая помощь"            , GOSSIP_SENDER_MAIN, 2102);
+            player->ADD_GOSSIP_ITEM(3, "Рыболовство"              , GOSSIP_SENDER_MAIN, 2103);
+            player->ADD_GOSSIP_ITEM(3, "Верховая езда"               , GOSSIP_SENDER_MAIN, 2104);
+			player->ADD_GOSSIP_ITEM(7, "<- Назад"               , GOSSIP_SENDER_MAIN, 200);
+            player->ADD_GOSSIP_ITEM(7, "<- Главное меню"          , GOSSIP_SENDER_MAIN, 5005);
 
 	player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,pCreature->GetGUID());
 break;
@@ -377,40 +374,40 @@ case 5005: //Back To Main Menu
 	// Main Menu for Alliance
     if (player->GetTeam() == ALLIANCE)
 	{
-	// Buffs
+	//Бафы
 	if (EnableBuffs)
-		player->ADD_GOSSIP_ITEM(2, " Buffs ->"  		       	  , GOSSIP_SENDER_MAIN, 100);
-	// EnableTrainers
-	if (EnableTrainers)
-		player->ADD_GOSSIP_ITEM(3, "Trainers ->"  			  , GOSSIP_SENDER_MAIN, 300);
+		player->ADD_GOSSIP_ITEM(2, "Бафы ->"  		       	  , GOSSIP_SENDER_MAIN, 100);
+	// EnableТренеры
+	if (EnableТренеры)
+		player->ADD_GOSSIP_ITEM(3, "Тренеры ->"  			  , GOSSIP_SENDER_MAIN, 300);
 	// Check config if "Player Tools" is enabled or not
 	if (EnablePlayerTools)
 		player->ADD_GOSSIP_ITEM(8, "Player Tools ->"            , GOSSIP_SENDER_MAIN, 4000);
 			// Check config if "Morph" is enabled or not
 	if (EnableMorph)
-		player->ADD_GOSSIP_ITEM(4, "Morph ->"       			  , GOSSIP_SENDER_MAIN, 700);
+		player->ADD_GOSSIP_ITEM(4, "Морфы ->"       			  , GOSSIP_SENDER_MAIN, 700);
 
 	}
 	else // Main Menu for Horde
 	{
-	// Buffs
+	//Бафы
 	if (EnableBuffs)
-		player->ADD_GOSSIP_ITEM(2, " Buffs ->"  		       	  , GOSSIP_SENDER_MAIN, 100);
-	// EnableTrainers
-	if (EnableTrainers)
-		player->ADD_GOSSIP_ITEM(3, "Trainers ->"  			  , GOSSIP_SENDER_MAIN, 300);
+		player->ADD_GOSSIP_ITEM(2, "Бафы ->"  		       	  , GOSSIP_SENDER_MAIN, 100);
+	// EnableТренеры
+	if (EnableТренеры)
+		player->ADD_GOSSIP_ITEM(3, "Тренеры ->"  			  , GOSSIP_SENDER_MAIN, 300);
 	// Check config if "Player Tools" is enabled or not
 	if (EnablePlayerTools)
 		player->ADD_GOSSIP_ITEM(8, "Player Tools ->"            , GOSSIP_SENDER_MAIN, 4000);
 			// Check config if "Morph" is enabled or not
 	if (EnableMorph)
-		player->ADD_GOSSIP_ITEM(4, "Morph ->"       			  , GOSSIP_SENDER_MAIN, 700);
+		player->ADD_GOSSIP_ITEM(4, "Морфы ->"       			  , GOSSIP_SENDER_MAIN, 700);
 
 	}
 
 	// Check config file if "Remove res sickness" option is enabled or not
 	if (EnableRemoveResSickness)
-		player->ADD_GOSSIP_ITEM(9, "Remove Resurrect Sickness" , GOSSIP_SENDER_MAIN, 7000);
+		player->ADD_GOSSIP_ITEM(9, "Снять вредоносные заклинания" , GOSSIP_SENDER_MAIN, 7000);
 
 	player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,pCreature->GetGUID());
 break;
@@ -607,7 +604,7 @@ case 3040: // Buff me Wisdom of Agamaggan
     player->ModifyMoney(-(sConfig->GetFloatDefault("pryds_allinoneBuffGoldCost",0)));
 break;
 
-//////////////////////////////////////////////////Trainers ///////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////Тренеры ///////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////Class ///////////////////////////////////////////////////////////////
 case 601: // Death Knight
@@ -1009,7 +1006,7 @@ break;
 case 1101: // Alchemy
 	if (!player->UpdateSkill(171,0))
       {
-		pCreature->MonsterWhisper("You don't have this skill or you allready have the maximum skill value $C.", player->GetGUID());
+		pCreature->MonsterWhisper("Вы не знаете этой профессии или вы уже её полностью знаете $C.", player->GetGUID());
 		OnGossipHello(player, pCreature);
 		return;
 	}
@@ -1022,7 +1019,7 @@ break;
 case 1102: // Blacksmithing
 	if (!player->UpdateSkill(164,0))
       {
-		pCreature->MonsterWhisper("You don't have this skill or you allready have the maximum skill value $C.", player->GetGUID());
+		pCreature->MonsterWhisper("Вы не знаете этой профессии или вы уже её полностью знаете $C.", player->GetGUID());
 		OnGossipHello(player, pCreature);
 		return;
 	}
@@ -1035,7 +1032,7 @@ break;
 case 1103: // Enchanting
 	if (!player->UpdateSkill(333,0))
       {
-		pCreature->MonsterWhisper("You don't have this skill or you allready have the maximum skill value $C.", player->GetGUID());
+		pCreature->MonsterWhisper("Вы не знаете этой профессии или вы уже её полностью знаете $C.", player->GetGUID());
 		OnGossipHello(player, pCreature);
 		return;
 	}
@@ -1048,7 +1045,7 @@ break;
 case 1104: // Engineering
 	if (!player->UpdateSkill(202,0))
       {
-		pCreature->MonsterWhisper("You don't have this skill or you allready have the maximum skill value $C.", player->GetGUID());
+		pCreature->MonsterWhisper("Вы не знаете этой профессии или вы уже её полностью знаете $C.", player->GetGUID());
 		OnGossipHello(player, pCreature);
 		return;
 	}
@@ -1061,7 +1058,7 @@ break;
 case 1105: // Herbalism
 	if (!player->UpdateSkill(182,0))
       {
-		pCreature->MonsterWhisper("You don't have this skill or you allready have the maximum skill value $C.", player->GetGUID());
+		pCreature->MonsterWhisper("Вы не знаете этой профессии или вы уже её полностью знаете $C.", player->GetGUID());
 		OnGossipHello(player, pCreature);
 		return;
 	}
@@ -1074,7 +1071,7 @@ break;
 case 1106: // Inscription
 	if (!player->UpdateSkill(773,0))
       {
-		pCreature->MonsterWhisper("You don't have this skill or you allready have the maximum skill value $C.", player->GetGUID());
+		pCreature->MonsterWhisper("Вы не знаете этой профессии или вы уже её полностью знаете $C.", player->GetGUID());
 		OnGossipHello(player, pCreature);
 		return;
 	}
@@ -1087,7 +1084,7 @@ break;
 case 1107: // Jewelcrafting
 	if (!player->UpdateSkill(755,0))
       {
-		pCreature->MonsterWhisper("You don't have this skill or you allready have the maximum skill value $C.", player->GetGUID());
+		pCreature->MonsterWhisper("Вы не знаете этой профессии или вы уже её полностью знаете $C.", player->GetGUID());
 		OnGossipHello(player, pCreature);
 		return;
 	}
@@ -1100,7 +1097,7 @@ break;
 case 1108: // Leatherworking
 	if (!player->UpdateSkill(165,0))
       {
-		pCreature->MonsterWhisper("You don't have this skill or you allready have the maximum skill value $C.", player->GetGUID());
+		pCreature->MonsterWhisper("Вы не знаете этой профессии или вы уже её полностью знаете $C.", player->GetGUID());
 		OnGossipHello(player, pCreature);
 		return;
 	}
@@ -1113,7 +1110,7 @@ break;
 case 1109: // Mining
 	if (!player->UpdateSkill(186,0))
       {
-		pCreature->MonsterWhisper("You don't have this skill or you allready have the maximum skill value $C.", player->GetGUID());
+		pCreature->MonsterWhisper("Вы не знаете этой профессии или вы уже её полностью знаете $C.", player->GetGUID());
 		OnGossipHello(player, pCreature);
 		return;
 	}
@@ -1126,7 +1123,7 @@ break;
 case 1110: // Skinning
 	if (!player->UpdateSkill(393,0))
       {
-		pCreature->MonsterWhisper("You don't have this skill or you allready have the maximum skill value $C.", player->GetGUID());
+		pCreature->MonsterWhisper("Вы не знаете этой профессии или вы уже её полностью знаете $C.", player->GetGUID());
 		OnGossipHello(player, pCreature);
 		return;
 	}
@@ -1139,7 +1136,7 @@ break;
 case 1111: // Tailoring
 	if (!player->UpdateSkill(197,0))
       {
-		pCreature->MonsterWhisper("You don't have this skill or you allready have the maximum skill value $C.", player->GetGUID());
+		pCreature->MonsterWhisper("Вы не знаете этой профессии или вы уже её полностью знаете $C.", player->GetGUID());
 		OnGossipHello(player, pCreature);
 		return;
 	}
@@ -1154,7 +1151,7 @@ break;
 case 2101: // Cooking
 	if (!player->UpdateSkill(185,0))
       {
-		pCreature->MonsterWhisper("You don't have this skill or you allready have the maximum skill value $C.", player->GetGUID());
+		pCreature->MonsterWhisper("Вы не знаете этой профессии или вы уже её полностью знаете $C.", player->GetGUID());
 		OnGossipHello(player, pCreature);
 		return;
 	}
@@ -1167,7 +1164,7 @@ break;
 case 2102: // First Aid
 	if (!player->UpdateSkill(129,0))
       {
-		pCreature->MonsterWhisper("You don't have this skill or you allready have the maximum skill value $C.", player->GetGUID());
+		pCreature->MonsterWhisper("Вы не знаете этой профессии или вы уже её полностью знаете $C.", player->GetGUID());
 		OnGossipHello(player, pCreature);
 		return;
 	}
@@ -1180,7 +1177,7 @@ break;
 case 2103: // Fishing
 	if (!player->UpdateSkill(356,0))
       {
-		pCreature->MonsterWhisper("You don't have this skill or you allready have the maximum skill value $C.", player->GetGUID());
+		pCreature->MonsterWhisper("Вы не знаете этой профессии или вы уже её полностью знаете $C.", player->GetGUID());
 		OnGossipHello(player, pCreature);
 		return;
 	}
@@ -1190,18 +1187,18 @@ case 2103: // Fishing
 	player->CLOSE_GOSSIP_MENU();
 break;
 
-//case 2104: // Riding
-//	if (!player->UpdateSkill(,0))
-//    {
-//		pCreature->MonsterWhisper("You don't have this skill or you allready have the maximum skill value $C.", player->GetGUID());
-//		OnGossipHello_ProfessionNPC(player, pCreature);
-//		return;
-//	}
-//
-//	player->UpdateSkill(,(sConfig->GetFloatDefault("pryds_allinoneSkillPoints",0)));
-//	player->ModifyMoney(-(sConfig->GetFloatDefault("pryds_allinoneSkillGoldCost",0)));
-//	player->CLOSE_GOSSIP_MENU();
-//break;
+case 2104: // Riding
+	if (!player->UpdateSkill(,0))
+    {
+		pCreature->MonsterWhisper("Вы не знаете этой профессии или вы уже её полностью знаете $C.", player->GetGUID());
+		OnGossipHello_ProfessionNPC(player, pCreature);
+		return;
+	}
+
+	player->UpdateSkill(,(sConfig->GetFloatDefault("pryds_allinoneSkillPoints",0)));
+	player->ModifyMoney(-(sConfig->GetFloatDefault("pryds_allinoneSkillGoldCost",0)));
+	player->CLOSE_GOSSIP_MENU();
+break;
  player->CLOSE_GOSSIP_MENU();
 
 } // end of switch

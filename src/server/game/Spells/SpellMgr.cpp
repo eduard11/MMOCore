@@ -3448,6 +3448,9 @@ void SpellMgr::LoadDbcDataCorrections()
             spellInfo->EffectImplicitTargetB[0] = TARGET_UNIT_TARGET_ANY;
             spellInfo->Effect[1] = 0;
             break;
+		case 45529: // Blood Tap
+            spellInfo->EffectMiscValue[0] = 0;
+            break;
         case 49206: // Summon Gargoyle
             spellInfo->DurationIndex = 587;
             //++count;

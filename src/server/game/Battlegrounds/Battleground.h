@@ -439,8 +439,9 @@ class Battleground
 
         // Map pointers
         void SetBgMap(BattlegroundMap* map) { m_Map = map; }
-        BattlegroundMap* GetBgMap()
+        BattlegroundMap* GetBgMap(bool WithAssert = true)
         {
+			if(WithAssert)
             ASSERT(m_Map);
             return m_Map;
         }
