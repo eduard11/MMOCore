@@ -5010,13 +5010,6 @@ bool Unit::HandleHasteAuraProc(Unit* victim, uint32 damage, AuraEffect* triggere
             }
             break;
         }
-		case SPELLFAMILY_WARRIOR:
-        {
-            // Recklessness - prevent double proc
-            if (dummySpell->Id == 1719)
-                return false;
-            break;
-        }
     }
     // processed charge only counting case
     if (!triggered_spell_id)
