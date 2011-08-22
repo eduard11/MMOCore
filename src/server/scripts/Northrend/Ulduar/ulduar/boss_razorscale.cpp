@@ -19,6 +19,8 @@
 #include "ScriptedCreature.h"
 #include "ScriptedGossip.h"
 #include "SpellScript.h"
+#include "ScriptPCH.h"
+#include "ScriptedEscortAI.h"
 #include "ulduar.h"
 #include "SpellInfo.h"
 

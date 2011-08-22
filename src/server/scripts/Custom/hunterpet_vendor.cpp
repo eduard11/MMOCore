@@ -150,7 +150,7 @@ player->PlayerTalkClass->ClearMenus();
                         player->ADD_GOSSIP_ITEM(2, "Wespe (Saphirblaue Schwarmwespe)", GOSSIP_SENDER_MAIN, wespeblau);
                         player->ADD_GOSSIP_ITEM(2, "Wolf (Kriegshund der Zerschmetterten Hand)", GOSSIP_SENDER_MAIN, wolfruestung);
                         player->ADD_GOSSIP_ITEM(2, "Wolf (Wilder Worg)", GOSSIP_SENDER_MAIN, wolfgrau);
-                        player->ADD_GOSSIP_ITEM(2, "Wolf (Blutdurstiger Tundrawolf)", GOSSIP_SENDER_MAIN, wolfwei?);
+//                        player->ADD_GOSSIP_ITEM(2, "Wolf (Blutdurstiger Tundrawolf)", GOSSIP_SENDER_MAIN, wolfwei?);
                         player->ADD_GOSSIP_ITEM(0, "I would prefer a exotic list...", GOSSIP_SENDER_MAIN, exotic);
  
                         player->SEND_GOSSIP_MENU(40011, creature->GetGUID());

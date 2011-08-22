@@ -75,7 +75,7 @@ public:
                 pCreature->MonsterWhisper(msg, pPlayer->GetGUID());
                 break;
         }
-        pPlayer->PlayerTalkClass->CloseGossip();
+        pPlayer->PlayerTalkClass->SendCloseGossip();
         return true;
     }
 

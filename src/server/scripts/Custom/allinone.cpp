@@ -363,7 +363,7 @@ case 6000: //Secondary Skills
             player->ADD_GOSSIP_ITEM(3, "Кулинария"              , GOSSIP_SENDER_MAIN, 2101);
             player->ADD_GOSSIP_ITEM(3, "Первая помощь"            , GOSSIP_SENDER_MAIN, 2102);
             player->ADD_GOSSIP_ITEM(3, "Рыболовство"              , GOSSIP_SENDER_MAIN, 2103);
-            player->ADD_GOSSIP_ITEM(3, "Верховая езда"               , GOSSIP_SENDER_MAIN, 2104);
+            //player->ADD_GOSSIP_ITEM(3, "Верховая езда"               , GOSSIP_SENDER_MAIN, 2104);
 			player->ADD_GOSSIP_ITEM(7, "<- Назад"               , GOSSIP_SENDER_MAIN, 200);
             player->ADD_GOSSIP_ITEM(7, "<- Главное меню"          , GOSSIP_SENDER_MAIN, 5005);
 
@@ -970,14 +970,14 @@ case 4026: // Update Skill to Max for Level
     player->CLOSE_GOSSIP_MENU();
     player->UpdateSkillsToMaxSkillsForLevel();
     player->ModifyMoney(-(sConfig->GetFloatDefault("pryds_allinoneBuffGoldCost",0)));
-    pCreature->MonsterSay("Your Skills have now been Maxed for your Level.", LANG_UNIVERSAL, NULL);
+    pCreature->MonsterSay("Ваше умение поднято до максимально возможного уровня.", LANG_UNIVERSAL, NULL);
     
 break;
 
 case 4027: // Drunk
     player->CLOSE_GOSSIP_MENU();
     player->CastSpell(player,46876,false);
-    pCreature->MonsterSay("Hahahaha! You are Drunk Now!", LANG_UNIVERSAL, NULL);
+    pCreature->MonsterSay("Хахахаха! Теперь вы пьяны!", LANG_UNIVERSAL, NULL);
     
 break;
 
@@ -991,7 +991,7 @@ break;
 case 7000://Remove Res Sickness
 	if (!player->HasAura(15007,0))
 	{
-		pCreature->MonsterWhisper("You don't have resurrection sickness.", player->GetGUID());
+		pCreature->MonsterWhisper("На вас нету вредоносных заклинаний.", player->GetGUID());
 		OnGossipHello(player, pCreature);
 		return;
 	}
@@ -1187,7 +1187,7 @@ case 2103: // Fishing
 	player->CLOSE_GOSSIP_MENU();
 break;
 
-case 2104: // Riding
+/*case 2104: // Riding
 	if (!player->UpdateSkill(,0))
     {
 		pCreature->MonsterWhisper("Вы не знаете этой профессии или вы уже её полностью знаете $C.", player->GetGUID());
@@ -1198,7 +1198,7 @@ case 2104: // Riding
 	player->UpdateSkill(,(sConfig->GetFloatDefault("pryds_allinoneSkillPoints",0)));
 	player->ModifyMoney(-(sConfig->GetFloatDefault("pryds_allinoneSkillGoldCost",0)));
 	player->CLOSE_GOSSIP_MENU();
-break;
+break;*/
  player->CLOSE_GOSSIP_MENU();
 
 } // end of switch

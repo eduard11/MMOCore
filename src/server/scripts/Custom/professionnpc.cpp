@@ -114,7 +114,7 @@ case 2000: //Secondary Skills
             pPlayer->ADD_GOSSIP_ITEM( 5, "Кулинария"              , GOSSIP_SENDER_MAIN, 2001);
             pPlayer->ADD_GOSSIP_ITEM( 5, "Первая помощь"            , GOSSIP_SENDER_MAIN, 2002);
             pPlayer->ADD_GOSSIP_ITEM( 5, "Рыболовство"              , GOSSIP_SENDER_MAIN, 2003);
-            pPlayer->ADD_GOSSIP_ITEM( 5, "Верховая езда"               , GOSSIP_SENDER_MAIN, 2004);
+            //pPlayer->ADD_GOSSIP_ITEM( 5, "Верховая езда"               , GOSSIP_SENDER_MAIN, 2004);
             pPlayer->ADD_GOSSIP_ITEM( 7, "<- Главное меню"          , GOSSIP_SENDER_MAIN, 3000);
 
 	pPlayer->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,pCreature->GetGUID());
@@ -330,7 +330,7 @@ case 2003: // Fishing
 	pPlayer->CLOSE_GOSSIP_MENU();
 break;
 
-case 2004: // Riding
+/*case 2004: // Riding
 	if(!pPlayer->UpdateSkill(,0))
     {
 		pCreature->MonsterWhisper("Вы не знаете этой профессии или же уже полностью выучили $C.", pPlayer->GetGUID());
@@ -341,7 +341,7 @@ case 2004: // Riding
 	pPlayer->UpdateSkill(,(sConfig->GetFloatDefault("SkillPoints",0)));
 	pPlayer->ModifyMoney(-(sConfig->GetFloatDefault("SkillGoldCost",0)));
 	pPlayer->CLOSE_GOSSIP_MENU();
-	break;
+	break;*/
 
  pPlayer->CLOSE_GOSSIP_MENU();
 
