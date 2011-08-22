@@ -33,17 +33,17 @@ enum ActNpcRename
 #define PRISE_CUSTOMIZE_RACE_CHAR_AP 50000000
 #define PRISE_CUSTOMIZE_FACTION_CHAR_AP 200000000
 
-#define GOSSIP_RENAME_HELLO "Ich möchte den Namen meines Charakters ändern"
-#define GOSSIP_CUSTOMIZE_HELLO "Ich möchte das Aussehen oder das Geschlecht meines Charakters ändern"
-#define GOSSIP_CUSTOMIZE_RACE_HELLO "Ich möchte meine Rasse wechseln"
+#define GOSSIP_RENAME_HELLO "Я хочу изменить имя моего персонажа"
+#define GOSSIP_CUSTOMIZE_HELLO "Я хочу изменить внешность или пол моего персонажа"
+#define GOSSIP_CUSTOMIZE_RACE_HELLO "Я хочу изменить свою расу"
 #define GOSSIP_CUSTOMIZE_FACTION_HELLO "Ich möchte meine Fraktion wechseln"
-#define GOSSIP_RENAME_CONFIRM "Für 2500 Gold umbenennen ?"
-#define GOSSIP_CUSTOMIZE_CONFIRM "Für 2500 Gold Aussehen ändern ?"
-#define GOSSIP_CUSTOMIZE_FACTION_RACE "Für 5000 Gold Rasse ändern ?"
+#define GOSSIP_RENAME_CONFIRM "Переименовать за 2500 голд?"
+#define GOSSIP_CUSTOMIZE_CONFIRM "Изменить внешность за 2500 голд?"
+#define GOSSIP_CUSTOMIZE_FACTION_RACE "Изменить расу за 5000 голд?"
 #define GOSSIP_CUSTOMIZE_FACTION_CONFIRM "Für 20000 Gold Fraktion ändern ?"
 
 
-#define MSG_NOT_MONEY_FOR_RENAME "Du hast nicht genug Gold!"
+#define MSG_NOT_MONEY_FOR_RENAME "У вас недостаточно денег!"
 #define MSG_COMPLETE_RENAME "Bei der nächsten Anmeldung, wirst du aufgefordert, einen neuen Namen einzugeben!"
 #define MSG_COMPLETE_CUSTOMIZE "Bei der nächsten Anmeldung, wirst du aufgefordert, deinen Namen und dein Aussehen zu verändern!"
 #define MSG_COMPLETE_RACE_CUSTOMIZE "Bei der nächsten Anmeldung, wirst du aufgefordert, deine Rasse zu verändern!"

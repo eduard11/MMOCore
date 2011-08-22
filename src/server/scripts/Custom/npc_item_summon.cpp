@@ -46,7 +46,7 @@ public:
           pPlayer->SummonCreature(9999019, pPlayer->GetPositionX(),  pPlayer->GetPositionY(), pPlayer->GetPositionZ()+2, 0,  TEMPSUMMON_TIMED_DESPAWN, 180000);
           pPlayer->SummonCreature(9999020, pPlayer->GetPositionX()-2,  pPlayer->GetPositionY(), pPlayer->GetPositionZ(), 0,  TEMPSUMMON_TIMED_DESPAWN, 60000);
           pPlayer->SummonCreature(9999021, pPlayer->GetPositionX()+2,  pPlayer->GetPositionY(), pPlayer->GetPositionZ()+2, 0,  TEMPSUMMON_TIMED_DESPAWN, 60000);		  
-          //pPlayer->SummonCreature(9999019, pPlayer->GetPositionX(),  pPlayer->GetPositionY()+1, pPlayer->GetPositionZ(), 0,  TEMPSUMMON_TIMED_DESPAWN, 180000);		  
+          pPlayer->SummonCreature(9999019, pPlayer->GetPositionX(),  pPlayer->GetPositionY()+1, pPlayer->GetPositionZ(), 0,  TEMPSUMMON_TIMED_DESPAWN, 180000);		  
         return false;
     }
 };

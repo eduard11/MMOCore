@@ -31,9 +31,9 @@
 #define MSG_CAT                 100000
 #define MSG_DEST                100001
 
-#define NEXT_PAGE               "-> [Nдchste Seite]"
-#define PREV_PAGE               "<- [Vorherige Seite]"
-#define MAIN_MENU               "<= [Hauptmenь]"
+#define NEXT_PAGE               "-> [Вперёд]"
+#define PREV_PAGE               "<- [Назад]"
+#define MAIN_MENU               "<= [Главное меню]"
 
 
 using namespace nsNpcTel;

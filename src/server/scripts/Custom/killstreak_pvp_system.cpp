@@ -107,31 +107,31 @@ void OnPVPKill(Player *pKiller, Player *pVictim)
         switch(KillingStreak[kGUID].KillStreak)
         {
         case KillerStreak1:
-        sprintf(msg, "[PvP System]: %s killed %s and is on a %u kill streak. ", pKiller->GetName(), pVictim->GetName(), KillStreaks[1]);
+        sprintf(msg, "[PvP System]: %s killed %s и находится на %u убитых подряд. ", pKiller->GetName(), pVictim->GetName(), KillStreaks[1]);
         sWorld->SendWorldText(LANG_SYSTEMMESSAGE, msg);
         pKiller->AddItem(ItemReward, AmountOfRewardsOnKillStreak[1]);
         break;
 
         case KillerStreak2:
-        sprintf(msg, "[PvP System]: %s killed %s and is on a %u kill streak. ", pKiller->GetName(), pVictim->GetName(), KillStreaks[2]);
+        sprintf(msg, "[PvP System]: %s killed %s и находится на %u убитых подряд. ", pKiller->GetName(), pVictim->GetName(), KillStreaks[2]);
         sWorld->SendWorldText(LANG_SYSTEMMESSAGE, msg);
         pKiller->AddItem(ItemReward, AmountOfRewardsOnKillStreak[2]);
         break;
 
         case KillerStreak3:
-        sprintf(msg, "[PvP System]: %s killed %s and is on a %u kill streak. ", pKiller->GetName(), pVictim->GetName(), KillStreaks[3]);
+        sprintf(msg, "[PvP System]: %s killed %s и находится на %u убитых подряд. ", pKiller->GetName(), pVictim->GetName(), KillStreaks[3]);
         sWorld->SendWorldText(LANG_SYSTEMMESSAGE, msg);
         pKiller->AddItem(ItemReward, AmountOfRewardsOnKillStreak[3]);
         break;
 
         case KillerStreak4:
-        sprintf(msg, "[PvP System]: %s killed %s and is on a %u kill streak. ", pKiller->GetName(), pVictim->GetName(), KillStreaks[4]);
+        sprintf(msg, "[PvP System]: %s killed %s и находится на %u убитых подряд. ", pKiller->GetName(), pVictim->GetName(), KillStreaks[4]);
         sWorld->SendWorldText(LANG_SYSTEMMESSAGE, msg);
         pKiller->AddItem(ItemReward, AmountOfRewardsOnKillStreak[4]);
         break;
 
         case KillerStreak5:
-        sprintf(msg, "[PvP System]: %s killed %s and is on a %u kill streak. ", pKiller->GetName(), pVictim->GetName(), KillStreaks[5]);
+        sprintf(msg, "[PvP System]: %s killed %s и находится на %u убитых подряд. ", pKiller->GetName(), pVictim->GetName(), KillStreaks[5]);
         sWorld->SendWorldText(LANG_SYSTEMMESSAGE, msg);
         pKiller->AddItem(ItemReward, AmountOfRewardsOnKillStreak[5]);
         KillingStreak[kGUID].KillStreak = 0;
