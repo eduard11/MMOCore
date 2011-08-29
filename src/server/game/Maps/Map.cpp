@@ -2036,6 +2036,12 @@ void Map::RemoveAllObjectsInRemoveList()
         std::set<WorldObject*>::iterator itr = i_objectsToRemove.begin();
         WorldObject* obj = *itr;
 
+        if (!obj)
+        {
+            i_objectsToRemove.erase(itr);
+            continue;
+        }
+    
         switch(obj->GetTypeId())
         {
             case TYPEID_CORPSE:
@@ -2542,7 +2548,7 @@ void InstanceMap::SetResetSchedule(bool on)
         if (InstanceSave *save = sInstanceSaveMgr->GetInstanceSave(GetInstanceId()))
             sInstanceSaveMgr->ScheduleReset(on, save->GetResetTime(), InstanceSaveManager::InstResetEvent(0, GetId(), Difficulty(GetSpawnMode()), GetInstanceId()));
         else
-            sLog->outError("InstanceMap::SetResetSchedule: cannot turn schedule %s, there is no save information for instance (map [id: %u, name: %s], instance id: %u)",
+            sLog->outError("InstanceMap::SetResetSchedule: cannot turn schedule %s, there is no save information for instance (map [id: %u, name: %s], instance id: %u, difficulty: %u)",
                 on ? "on" : "off", GetId(), GetMapName(), GetInstanceId(), Difficulty(GetSpawnMode()));
     }
 }

@@ -460,7 +460,7 @@ bool ScriptedAI::EnterEvadeIfOutOfCombatArea(uint32 const diff)
 
     switch (me->GetEntry())
     {
-        case NPC_BROODLORD:                                           // broodlord (not move down stairs)
+        case NPC_BROODLORD:                                         // broodlord (not move down stairs)
             if (z > 448.60f)
                 return false;
             break;

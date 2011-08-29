@@ -368,7 +368,7 @@ pAuraEffectHandler AuraEffectHandler[TOTAL_AURAS]=
     &AuraEffect::HandleNULL,                                      //311 0 spells in 3.3.5
     &AuraEffect::HandleNULL,                                      //312 0 spells in 3.3.5
     &AuraEffect::HandleNULL,                                      //313 0 spells in 3.3.5
-    &AuraEffect::HandleNoImmediateEffect,                         //314 SPELL_AURA_PREVENT_RESSURECTION todo
+    &AuraEffect::HandlePreventResurrection,                       //314 SPELL_AURA_PREVENT_RESSURECTION todo
     &AuraEffect::HandleNoImmediateEffect,                         //315 SPELL_AURA_UNDERWATER_WALKING todo
     &AuraEffect::HandleNoImmediateEffect,                         //316 SPELL_AURA_PERIODIC_HASTE implemented in AuraEffect::CalculatePeriodic
 };
@@ -1531,7 +1531,7 @@ void AuraEffect::HandleShapeshiftBoosts(Unit* target, bool apply) const
                     // Heart of the Wild
                     if ((*i)->GetSpellInfo()->SpellIconID == 240 && (*i)->GetMiscValue() == 3)
                     {
-                        int32 HotWMod = (*i)->GetAmount();
+                        int32 HotWMod = (*i)->GetAmount() / 2; // For each 2% Intelligence, you get 1% stamina and 1% attack power.
 
                         target->CastCustomSpell(target, HotWSpellId, &HotWMod, NULL, NULL, true, NULL, this);
                         break;
@@ -1577,7 +1577,7 @@ void AuraEffect::HandleShapeshiftBoosts(Unit* target, bool apply) const
                     // Survival of the Fittest
                     if (AuraEffect const* aurEff = target->GetAuraEffect(SPELL_AURA_MOD_TOTAL_STAT_PERCENTAGE, SPELLFAMILY_DRUID, 961, 0))
                     {
-                        int32 bp = 100 + aurEff->GetSpellInfo()->Effects[EFFECT_2].CalcValue();
+                        int32 bp = aurEff->GetSpellInfo()->Effects[EFFECT_2].CalcValue();
                         target->CastCustomSpell(target, 62069, &bp, NULL, NULL, true, 0, this);
                     }
                 break;
@@ -4533,7 +4533,7 @@ void AuraEffect::HandleModDamagePercentDone(AuraApplication const* aurApp, uint8
         target->HandleStatModifier(UNIT_MOD_DAMAGE_RANGED,           TOTAL_PCT, float (GetAmount()), apply);
 
         if (target->GetTypeId() == TYPEID_PLAYER)
-            target->ToPlayer()->ApplyModSignedFloatValue(PLAYER_FIELD_MOD_DAMAGE_DONE_PCT, GetAmount() / 100.0f, apply);
+            target->ToPlayer()->ApplyPercentModFloatValue(PLAYER_FIELD_MOD_DAMAGE_DONE_PCT, float (GetAmount()), apply);
     }
     else
     {
@@ -4961,6 +4961,18 @@ void AuraEffect::HandleAuraDummy(AuraApplication const* aurApp, uint8 mode, bool
                             if (aurApp->GetRemoveMode() != AURA_REMOVE_BY_DEFAULT)
                                 caster->SetReducedThreatPercent(0, 0);
                             break;
+                    }
+                    break;
+                case SPELLFAMILY_PRIEST:
+                    // Vampiric Touch
+                    if (m_spellInfo->SpellFamilyFlags[1] & 0x0400 && aurApp->GetRemoveMode() == AURA_REMOVE_BY_ENEMY_SPELL && GetEffIndex() == 0)
+                    {
+                        if (AuraEffect const* aurEff = GetBase()->GetEffect(1))
+                        {
+                            int32 damage = aurEff->GetAmount() * 8;
+                            // backfire damage
+                            target->CastCustomSpell(target, 64085, &damage, NULL, NULL, true, NULL, NULL, GetCasterGUID());
+                        }
                     }
                     break;
                 case SPELLFAMILY_WARLOCK:
@@ -5499,7 +5511,7 @@ void AuraEffect::HandleAuraLinked(AuraApplication const* aurApp, uint8 mode, boo
     {
         if (apply)
         {
-            Unit* caster = triggeredSpellInfo->IsRequiringSelectedTarget() ? GetCaster() : target;
+            Unit* caster = triggeredSpellInfo->NeedsToBeTriggeredByCaster() ? GetCaster() : target;
 
             if (!caster)
                 return;
@@ -5511,13 +5523,13 @@ void AuraEffect::HandleAuraLinked(AuraApplication const* aurApp, uint8 mode, boo
         }
         else
         {
-            uint64 casterGUID = triggeredSpellInfo->IsRequiringSelectedTarget() ? GetCasterGUID() : target->GetGUID();
+            uint64 casterGUID = triggeredSpellInfo->NeedsToBeTriggeredByCaster() ? GetCasterGUID() : target->GetGUID();
             target->RemoveAura(triggeredSpellId, casterGUID, 0, aurApp->GetRemoveMode());
         }
     }
     else if (mode & AURA_EFFECT_HANDLE_REAPPLY && apply)
     {
-        uint64 casterGUID = triggeredSpellInfo->IsRequiringSelectedTarget() ? GetCasterGUID() : target->GetGUID();
+        uint64 casterGUID = triggeredSpellInfo->NeedsToBeTriggeredByCaster() ? GetCasterGUID() : target->GetGUID();
         // change the stack amount to be equal to stack amount of our aura
         if (Aura* triggeredAura = target->GetAura(triggeredSpellId, casterGUID))
             triggeredAura->ModStackAmount(GetBase()->GetStackAmount() - triggeredAura->GetStackAmount());
@@ -5643,6 +5655,20 @@ void AuraEffect::HandleAuraSetVehicle(AuraApplication const* aurApp, uint8 mode,
     }
 }
 
+void AuraEffect::HandlePreventResurrection(AuraApplication const* aurApp, uint8 mode, bool apply) const
+{
+    if (!(mode & AURA_EFFECT_HANDLE_REAL))
+        return;
+
+    if (aurApp->GetTarget()->GetTypeId() != TYPEID_PLAYER)
+        return;
+
+    if (apply)
+        aurApp->GetTarget()->RemoveByteFlag(PLAYER_FIELD_BYTES, 0, PLAYER_FIELD_BYTE_RELEASE_TIMER);
+    else if (!aurApp->GetTarget()->GetBaseMap()->Instanceable())
+        aurApp->GetTarget()->SetByteFlag(PLAYER_FIELD_BYTES, 0, PLAYER_FIELD_BYTE_RELEASE_TIMER);
+}
+
 void AuraEffect::HandlePeriodicDummyAuraTick(Unit* target, Unit* caster) const
 {
     switch (GetSpellInfo()->SpellFamilyName)
@@ -5652,20 +5678,17 @@ void AuraEffect::HandlePeriodicDummyAuraTick(Unit* target, Unit* caster) const
             {
                 case 54798: // FLAMING Arrow Triggered Effect
                 {
-                    if (!caster || !target || !target->ToCreature() || !caster->IsVehicle() || target->HasAura(54683))
+                    if (!caster || !target || !target->ToCreature() || !caster->GetVehicle() || target->HasAura(54683))
                         break;
 
-                    if (Unit* rider = caster->GetVehicleKit()->GetPassenger(0))
-                    {
-                        target->CastSpell(target, 54683, true);
+                    target->CastSpell(target, 54683, true);
 
-                        // Credit Frostworgs
-                        if (target->GetEntry() == 29358)
-                            rider->CastSpell(rider, 54896, true);
-                        // Credit Frost Giants
-                        else if (target->GetEntry() == 29351)
-                            rider->CastSpell(rider, 54893, true);
-                    }
+                    // Credit Frostworgs
+                    if (target->GetEntry() == 29358)
+                        caster->CastSpell(caster, 54896, true);
+                    // Credit Frost Giants
+                    else if (target->GetEntry() == 29351)
+                        caster->CastSpell(caster, 54893, true);
                     break;
                 }
                 case 62292: // Blaze (Pool of Tar)
@@ -6150,7 +6173,7 @@ void AuraEffect::HandlePeriodicTriggerSpellAuraTick(Unit* target, Unit* caster) 
 
     if (triggeredSpellInfo)
     {
-        if (Unit* triggerCaster = triggeredSpellInfo->IsRequiringSelectedTarget() ? caster : target)
+        if (Unit* triggerCaster = triggeredSpellInfo->NeedsToBeTriggeredByCaster() ? caster : target)
         {
             triggerCaster->CastSpell(target, triggeredSpellInfo, true, NULL, this);
             sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "AuraEffect::HandlePeriodicTriggerSpellAuraTick: Spell %u Trigger %u", GetId(), triggeredSpellInfo->Id);
@@ -6170,7 +6193,7 @@ void AuraEffect::HandlePeriodicTriggerSpellWithValueAuraTick(Unit* target, Unit*
     uint32 triggerSpellId = GetSpellInfo()->Effects[m_effIndex].TriggerSpell;
     if (SpellInfo const* triggeredSpellInfo = sSpellMgr->GetSpellInfo(triggerSpellId))
     {
-        if (Unit* triggerCaster = triggeredSpellInfo->IsRequiringSelectedTarget() ? caster : target)
+        if (Unit* triggerCaster = triggeredSpellInfo->NeedsToBeTriggeredByCaster() ? caster : target)
         {
             int32 basepoints0 = GetAmount();
             triggerCaster->CastCustomSpell(target, triggerSpellId, &basepoints0, 0, 0, true, 0, this);

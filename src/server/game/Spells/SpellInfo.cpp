@@ -15,9 +15,35 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "SpellAuraDefines.h"
 #include "SpellInfo.h"
 #include "SpellMgr.h"
+#include "Spell.h"
 #include "DBCStores.h"
+
+uint32 GetTargetFlagMask(SpellTargetObjectTypes objType)
+{
+    switch (objType)
+    {
+        case TARGET_OBJECT_TYPE_DEST:
+            return TARGET_FLAG_DEST_LOCATION;
+        case TARGET_OBJECT_TYPE_UNIT_AND_DEST:
+            return TARGET_FLAG_DEST_LOCATION | TARGET_FLAG_UNIT;
+        case TARGET_OBJECT_TYPE_CORPSE:
+        case TARGET_OBJECT_TYPE_UNIT:
+            return TARGET_FLAG_UNIT;
+        case TARGET_OBJECT_TYPE_GOBJ:
+            return TARGET_FLAG_GAMEOBJECT;
+        case TARGET_OBJECT_TYPE_GOBJ_ITEM:
+            return TARGET_FLAG_GAMEOBJECT_ITEM;
+        case TARGET_OBJECT_TYPE_ITEM:
+            return TARGET_FLAG_ITEM;
+        case TARGET_OBJECT_TYPE_SRC:
+            return TARGET_FLAG_SOURCE_LOCATION;
+        default:
+            return TARGET_FLAG_NONE;
+    }
+}
 
 SpellImplicitTargetInfo::SpellImplicitTargetInfo(uint32 target)
 {
@@ -89,6 +115,88 @@ float SpellImplicitTargetInfo::CalcDirectionAngle() const
 Targets SpellImplicitTargetInfo::GetTarget() const
 {
     return _target;
+}
+
+uint32 SpellImplicitTargetInfo::GetExplicitTargetMask(bool& srcSet, bool& dstSet) const
+{
+    uint32 targetMask = 0;
+    if (GetTarget() == TARGET_DEST_TRAJ)
+    {
+        if (!srcSet)
+            targetMask = TARGET_FLAG_SOURCE_LOCATION;
+        if (!dstSet)
+            targetMask |= TARGET_FLAG_DEST_LOCATION;
+    }
+    else
+    {
+        switch (GetReferenceType())
+        {
+            case TARGET_REFERENCE_TYPE_SRC:
+                if (srcSet)
+                    break;
+                targetMask = TARGET_FLAG_SOURCE_LOCATION;
+                break;
+            case TARGET_REFERENCE_TYPE_DEST:
+                if (dstSet)
+                    break;
+                targetMask = TARGET_FLAG_DEST_LOCATION;
+                break;
+            case TARGET_REFERENCE_TYPE_TARGET:
+                switch (GetObjectType())
+                {
+                    case TARGET_OBJECT_TYPE_GOBJ:
+                        targetMask = TARGET_FLAG_GAMEOBJECT;
+                        break;
+                    case TARGET_OBJECT_TYPE_GOBJ_ITEM:
+                        targetMask = TARGET_FLAG_GAMEOBJECT_ITEM;
+                        break;
+                    case TARGET_OBJECT_TYPE_UNIT_AND_DEST:
+                    case TARGET_OBJECT_TYPE_UNIT:
+                    case TARGET_OBJECT_TYPE_DEST:
+                        switch (GetSelectionCheckType())
+                        {
+                            case TARGET_SELECT_CHECK_ENEMY:
+                                targetMask = TARGET_FLAG_UNIT_ENEMY;
+                                break;
+                            case TARGET_SELECT_CHECK_ALLY:
+                                targetMask = TARGET_FLAG_UNIT_ALLY;
+                                break;
+                            case TARGET_SELECT_CHECK_PARTY:
+                                targetMask = TARGET_FLAG_UNIT_PARTY;
+                                break;
+                            case TARGET_SELECT_CHECK_RAID:
+                                targetMask = TARGET_FLAG_UNIT_RAID;
+                                break;
+                            case TARGET_SELECT_CHECK_PASSENGER:
+                                targetMask = TARGET_FLAG_UNIT_PASSENGER;
+                                break;
+                            default:
+                                targetMask = TARGET_FLAG_UNIT;
+                                break;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    switch (GetObjectType())
+    {
+        case TARGET_OBJECT_TYPE_SRC:
+            srcSet = true;
+            break;
+        case TARGET_OBJECT_TYPE_DEST:
+        case TARGET_OBJECT_TYPE_UNIT_AND_DEST:
+            dstSet = true;
+            break;
+        default:
+            break;
+    }
+    return targetMask;
 }
 
 bool SpellImplicitTargetInfo::IsPosition(uint32 targetType)
@@ -423,17 +531,17 @@ bool SpellEffectInfo::IsAreaAuraEffect() const
 
 bool SpellEffectInfo::IsFarUnitTargetEffect() const
 {
-    return (Effect == SPELL_EFFECT_SUMMON_PLAYER);
+    return Effect == SPELL_EFFECT_SUMMON_PLAYER;
 }
 
 bool SpellEffectInfo::IsFarDestTargetEffect() const
 {
-    return (Effect == SPELL_EFFECT_TELEPORT_UNITS);
+    return Effect == SPELL_EFFECT_TELEPORT_UNITS;
 }
 
 bool SpellEffectInfo::IsUnitOwnedAuraEffect() const
 {
-    return (IsAreaAuraEffect() || Effect == SPELL_EFFECT_APPLY_AURA);
+    return IsAreaAuraEffect() || Effect == SPELL_EFFECT_APPLY_AURA;
 }
 
 int32 SpellEffectInfo::CalcValue(Unit const* caster, int32 const* bp, Unit const* /*target*/) const
@@ -879,10 +987,11 @@ SpellInfo::SpellInfo(SpellEntry const* spellEntry)
     SpellFamilyFlags = spellEntry->SpellFamilyFlags;
     DmgClass = spellEntry->DmgClass;
     PreventionType = spellEntry->PreventionType;
-    AreaGroupId  = spellEntry->AreaGroupId;
+    AreaGroupId = spellEntry->AreaGroupId;
     SchoolMask = spellEntry->SchoolMask;
     for (uint8 i = 0; i < MAX_SPELL_EFFECTS; ++i)
         Effects[i] = SpellEffectInfo(spellEntry, this, i);
+    ExplicitTargetMask = _GetExplicitTargetMask();
     ChainEntry = NULL;
 }
 
@@ -1017,17 +1126,23 @@ bool SpellInfo::IsAOE() const
     return false;
 }
 
-bool SpellInfo::IsRequiringSelectedTarget() const
+bool SpellInfo::NeedsExplicitUnitTarget() const
 {
-    for (uint8 i = 0 ; i < MAX_SPELL_EFFECTS; ++i)
+    return GetExplicitTargetMask() & TARGET_FLAG_UNIT_MASK;
+}
+
+bool SpellInfo::NeedsToBeTriggeredByCaster() const
+{
+    if (NeedsExplicitUnitTarget())
+        return true;
+    for (uint8 i = 0; i < MAX_SPELL_EFFECTS; ++i)
     {
-        if (Effects[i].TargetA.GetType() == TARGET_TYPE_UNIT_TARGET
-            || Effects[i].TargetB.GetType() == TARGET_TYPE_UNIT_TARGET
-            || Effects[i].TargetA.GetType() == TARGET_TYPE_CHANNEL
-            || Effects[i].TargetB.GetType() == TARGET_TYPE_CHANNEL
-            || Effects[i].TargetA.GetType() == TARGET_TYPE_DEST_TARGET
-            || Effects[i].TargetB.GetType() == TARGET_TYPE_DEST_TARGET)
-            return true;
+        if (Effects[i].IsEffect())
+        {
+            if (Effects[i].TargetA.GetSelectionCategory() == TARGET_SELECT_CATEGORY_CHANNEL
+                || Effects[i].TargetB.GetSelectionCategory() == TARGET_SELECT_CATEGORY_CHANNEL)
+                return true;
+        }
     }
     return false;
 }
@@ -1101,7 +1216,7 @@ bool SpellInfo::IsRequiringDeadTarget() const
 
 bool SpellInfo::IsAllowingDeadTarget() const
 {
-    return AttributesEx2 & SPELL_ATTR2_CAN_TARGET_DEAD;
+    return AttributesEx2 & SPELL_ATTR2_CAN_TARGET_DEAD || Targets & (TARGET_FLAG_CORPSE_ALLY | TARGET_FLAG_CORPSE_ENEMY | TARGET_FLAG_UNIT_DEAD);
 }
 
 bool SpellInfo::CanBeUsedInCombat() const
@@ -1154,15 +1269,23 @@ bool SpellInfo::IsAutoRepeatRangedSpell() const
     return AttributesEx2 & SPELL_ATTR2_AUTOREPEAT_FLAG;
 }
 
+bool SpellInfo::IsAffectedBySpellMods() const
+{
+    return !(AttributesEx3 & SPELL_ATTR3_NO_DONE_BONUS);
+}
+
 bool SpellInfo::IsAffectedBySpellMod(SpellModifier* mod) const
 {
+    if (!IsAffectedBySpellMods())
+        return false;
+
     SpellInfo const* affectSpell = sSpellMgr->GetSpellInfo(mod->spellId);
     // False if affect_spell == NULL or spellFamily not equal
     if (!affectSpell || affectSpell->SpellFamilyName != SpellFamilyName)
         return false;
 
     // true
-    if (mod->mask  & SpellFamilyFlags)
+    if (mod->mask & SpellFamilyFlags)
         return true;
 
     return false;
@@ -1486,6 +1609,171 @@ SpellCastResult SpellInfo::CheckLocation(uint32 map_id, uint32 zone_id, uint32 a
     return SPELL_CAST_OK;
 }
 
+SpellCastResult SpellInfo::CheckTarget(Unit const* caster, Unit const* target, bool implicit) const
+{
+    if (AttributesEx & SPELL_ATTR1_CANT_TARGET_SELF && caster == target)
+        return SPELL_FAILED_BAD_TARGETS;
+
+    if (AttributesEx & SPELL_ATTR1_CANT_TARGET_IN_COMBAT && target->isInCombat())
+        return SPELL_FAILED_TARGET_AFFECTING_COMBAT;
+
+    if (AttributesEx3 & SPELL_ATTR3_ONLY_TARGET_PLAYERS && !target->ToPlayer())
+       return SPELL_FAILED_TARGET_NOT_PLAYER;
+
+    if (!IsAllowingDeadTarget() && !target->isAlive())
+       return SPELL_FAILED_TARGETS_DEAD;
+
+    if (AttributesEx3 & SPELL_ATTR3_ONLY_TARGET_GHOSTS && !(!target->isAlive() && target->HasAuraType(SPELL_AURA_GHOST)))
+       return SPELL_FAILED_TARGET_NOT_GHOST;
+
+    // check this flag only for implicit targets (chain and area), allow to explicitly target units for spells like Shield of Righteousness
+    if (implicit && AttributesEx6 & SPELL_ATTR6_CANT_TARGET_CROWD_CONTROLLED && !target->CanFreeMove())
+       return SPELL_FAILED_BAD_TARGETS;
+
+    // check visibility - ignore stealth for implicit (area) targets
+    if (!(AttributesEx6 & SPELL_ATTR6_CAN_TARGET_INVISIBLE) && !caster->canSeeOrDetect(target, implicit))
+        return SPELL_FAILED_BAD_TARGETS;
+
+    if (!(AttributesEx6 & SPELL_ATTR6_CAN_TARGET_UNTARGETABLE) && target->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE))
+        return SPELL_FAILED_BAD_TARGETS;
+
+    //if (!(AttributesEx6 & SPELL_ATTR6_CAN_TARGET_POSSESSED_FRIENDS)
+
+    if (!CheckTargetCreatureType(target))
+    {
+        if (target->GetTypeId() == TYPEID_PLAYER)
+            return SPELL_FAILED_TARGET_IS_PLAYER;
+        else
+            return SPELL_FAILED_BAD_TARGETS;
+    }
+
+    // check UNIT_FLAG_NON_ATTACKABLE flag - a player can cast spells on his pet (or other controlled unit) though in any state
+    if (target != caster && target->GetCharmerOrOwnerGUID() != caster->GetGUID())
+    {
+        // any unattackable target skipped
+        if (target->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
+            return SPELL_FAILED_BAD_TARGETS;
+    }
+
+    // check GM mode and GM invisibility - only for player casts (npc casts are controlled by AI) and negative spells
+    if (target != caster && (caster->IsControlledByPlayer() || !IsPositive()) && target->GetTypeId() == TYPEID_PLAYER)
+    {
+        if (!target->ToPlayer()->IsVisible())
+            return SPELL_FAILED_BAD_TARGETS;
+
+        if (target->ToPlayer()->isGameMaster())
+            return SPELL_FAILED_BAD_TARGETS;
+    }
+
+    // not allow casting on flying player
+    if (target->HasUnitState(UNIT_STAT_IN_FLIGHT))
+        return SPELL_FAILED_BAD_TARGETS;
+
+    if (TargetAuraState && !target->HasAuraState(AuraStateType(TargetAuraState), this, caster))
+        return SPELL_FAILED_TARGET_AURASTATE;
+
+    if (TargetAuraStateNot && target->HasAuraState(AuraStateType(TargetAuraStateNot), this, caster))
+        return SPELL_FAILED_TARGET_AURASTATE;
+
+    if (TargetAuraSpell && !target->HasAura(sSpellMgr->GetSpellIdForDifficulty(TargetAuraSpell, caster)))
+        return SPELL_FAILED_TARGET_AURASTATE;
+
+    if (ExcludeTargetAuraSpell && target->HasAura(sSpellMgr->GetSpellIdForDifficulty(ExcludeTargetAuraSpell, caster)))
+        return SPELL_FAILED_TARGET_AURASTATE;
+
+    if (caster != target)
+    {
+        if (caster->GetTypeId() == TYPEID_PLAYER)
+        {
+            // Do not allow these spells to target creatures not tapped by us (Banish, Polymorph, many quest spells)
+            if (AttributesEx2 & SPELL_ATTR2_CANT_TARGET_TAPPED)
+                if (Creature const* targetCreature = target->ToCreature())
+                    if (targetCreature->hasLootRecipient() && !targetCreature->isTappedBy(caster->ToPlayer()))
+                        return SPELL_FAILED_CANT_CAST_ON_TAPPED;
+
+            if (AttributesCu & SPELL_ATTR0_CU_PICKPOCKET)
+            {
+                 if (target->GetTypeId() == TYPEID_PLAYER)
+                     return SPELL_FAILED_BAD_TARGETS;
+                 else if ((target->GetCreatureTypeMask() & CREATURE_TYPEMASK_HUMANOID_OR_UNDEAD) == 0)
+                     return SPELL_FAILED_TARGET_NO_POCKETS;
+            }
+
+            // Not allow disarm unarmed player
+            if (Mechanic == MECHANIC_DISARM)
+            {
+                if (target->GetTypeId() == TYPEID_PLAYER)
+                {
+                    Player const* player = target->ToPlayer();
+                    if (!player->GetWeaponForAttack(BASE_ATTACK) || !player->IsUseEquipedWeapon(true))
+                        return SPELL_FAILED_TARGET_NO_WEAPONS;
+                }
+                else if (!target->GetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID))
+                    return SPELL_FAILED_TARGET_NO_WEAPONS;
+            }
+        }
+    }
+
+    if (target->HasAuraType(SPELL_AURA_PREVENT_RESSURECTION))
+        if (HasEffect(SPELL_EFFECT_SELF_RESURRECT) || HasEffect(SPELL_EFFECT_RESURRECT) || HasEffect(SPELL_EFFECT_RESURRECT_NEW))
+            return SPELL_FAILED_TARGET_CANNOT_BE_RESURRECTED;
+
+    return SPELL_CAST_OK;
+}
+
+SpellCastResult SpellInfo::CheckExplicitTarget(Unit const* caster, WorldObject const* target) const
+{
+    uint32 neededTargets = GetExplicitTargetMask();
+    if (!target)
+    {
+        if (neededTargets & (TARGET_FLAG_UNIT_MASK | TARGET_FLAG_GAMEOBJECT_MASK | TARGET_FLAG_CORPSE_MASK))
+            return SPELL_FAILED_BAD_TARGETS;
+        return SPELL_CAST_OK;
+    }
+
+    if (Unit const* unitTarget = target->ToUnit())
+    {
+        if (neededTargets & (TARGET_FLAG_UNIT_ENEMY | TARGET_FLAG_UNIT_ALLY | TARGET_FLAG_UNIT_RAID | TARGET_FLAG_UNIT_PARTY | TARGET_FLAG_UNIT_MINIPET | TARGET_FLAG_UNIT_PASSENGER))
+        {
+            if (neededTargets & TARGET_FLAG_UNIT_ENEMY)
+                if (!caster->IsFriendlyTo(unitTarget))
+                    return SPELL_CAST_OK;
+            if (neededTargets & TARGET_FLAG_UNIT_ALLY)
+                if (caster->IsFriendlyTo(unitTarget))
+                    return SPELL_CAST_OK;
+            if (neededTargets & TARGET_FLAG_UNIT_PARTY)
+                if (caster->IsInPartyWith(unitTarget))
+                    return SPELL_CAST_OK;
+            if (neededTargets & TARGET_FLAG_UNIT_RAID)
+                if (caster->IsInRaidWith(unitTarget))
+                    return SPELL_CAST_OK;
+            if (neededTargets & TARGET_FLAG_UNIT_MINIPET)
+                if (unitTarget->GetGUID() == caster->GetCritterGUID())
+                    return SPELL_CAST_OK;
+            if (neededTargets & TARGET_FLAG_UNIT_PASSENGER)
+                if (unitTarget->IsOnVehicle(caster))
+                    return SPELL_CAST_OK;
+            return SPELL_FAILED_BAD_TARGETS;
+        }
+    }
+    return SPELL_CAST_OK;
+}
+
+bool SpellInfo::CheckTargetCreatureType(Unit const* target) const
+{
+    // Curse of Doom & Exorcism: not find another way to fix spell target check :/
+    if (SpellFamilyName == SPELLFAMILY_WARLOCK && Category == 1179)
+    {
+        // not allow cast at player
+        if (target->GetTypeId() == TYPEID_PLAYER)
+            return false;
+        else
+            return true;
+    }
+    uint32 creatureType = target->GetCreatureTypeMask();
+    return !TargetCreatureType || !creatureType || (creatureType & TargetCreatureType);
+}
+
 SpellSchoolMask SpellInfo::GetSchoolMask() const
 {
     return SpellSchoolMask(SchoolMask);
@@ -1495,10 +1783,10 @@ uint32 SpellInfo::GetAllEffectsMechanicMask() const
 {
     uint32 mask = 0;
     if (Mechanic)
-        mask |= 1<< Mechanic;
+        mask |= 1 << Mechanic;
     for (int i = 0; i < MAX_SPELL_EFFECTS; ++i)
         if (Effects[i].Mechanic)
-            mask |= 1<< Effects[i].Mechanic;
+            mask |= 1 << Effects[i].Mechanic;
     return mask;
 }
 
@@ -1523,7 +1811,7 @@ Mechanics SpellInfo::GetEffectMechanic(uint8 effIndex) const
 
 uint32 SpellInfo::GetDispelMask() const
 {
-    return SpellInfo::GetDispelMask(DispelType(Dispel));
+    return GetDispelMask(DispelType(Dispel));
 }
 
 uint32 SpellInfo::GetDispelMask(DispelType type)
@@ -1533,6 +1821,11 @@ uint32 SpellInfo::GetDispelMask(DispelType type)
         return DISPEL_ALL_MASK;
     else
         return uint32(1 << type);
+}
+
+uint32 SpellInfo::GetExplicitTargetMask() const
+{
+    return ExplicitTargetMask;
 }
 
 AuraStateType SpellInfo::GetAuraState() const
@@ -1980,6 +2273,81 @@ bool SpellInfo::IsHighRankOf(SpellInfo const* spellInfo) const
                 return true;
     }
     return false;
+}
+
+uint32 SpellInfo::_GetExplicitTargetMask() const
+{
+    bool srcSet = false;
+    bool dstSet = false;
+    uint32 targetMask = Targets;
+    // prepare target mask using effect target entries
+    for (uint8 i = 0; i < MAX_SPELL_EFFECTS; ++i)
+    {
+        if (!Effects[i].IsEffect())
+            continue;
+        targetMask |= Effects[i].TargetA.GetExplicitTargetMask(srcSet, dstSet);
+        targetMask |= Effects[i].TargetB.GetExplicitTargetMask(srcSet, dstSet);
+    }
+    // spells with range may need explicit targets, even if target entries not set
+    // for example many SPELL_EFFECT_LEARN_SPELL spells need to have unit target
+    if (GetMaxRange(true) > 0.0f || GetMaxRange(false) > 0.0f)
+    {
+        for (uint8 i = 0; i < MAX_SPELL_EFFECTS; ++i)
+        {
+            if (!Effects[i].IsEffect())
+                continue;
+
+            uint32 effImplicitTargetMask = GetTargetFlagMask(Effects[i].GetImplicitTargetObjectType());
+            uint32 providedTargetMask = GetTargetFlagMask(Effects[i].TargetA.GetObjectType()) | GetTargetFlagMask(Effects[i].TargetB.GetObjectType()) | targetMask;
+
+            // check if valid targets already present, prevent adding redundant flags
+            switch (Effects[i].GetImplicitTargetObjectType())
+            {
+                case TARGET_OBJECT_TYPE_UNIT_AND_DEST:
+                    if (providedTargetMask & TARGET_FLAG_UNIT_MASK)
+                        effImplicitTargetMask &= ~(TARGET_FLAG_UNIT_MASK);
+                    if (dstSet || providedTargetMask & TARGET_FLAG_DEST_LOCATION)
+                        effImplicitTargetMask &= ~(TARGET_FLAG_DEST_LOCATION);
+                    if (!effImplicitTargetMask)
+                        continue;
+                    break;
+                case TARGET_OBJECT_TYPE_SRC:
+                    if (srcSet || providedTargetMask & TARGET_FLAG_SOURCE_LOCATION)
+                        continue;
+                    break;
+                case TARGET_OBJECT_TYPE_DEST:
+                    if (dstSet || providedTargetMask & TARGET_FLAG_DEST_LOCATION)
+                        continue;
+                    break;
+                case TARGET_OBJECT_TYPE_UNIT:
+                    if (providedTargetMask & TARGET_FLAG_UNIT_MASK)
+                        continue;
+                    break;
+                case TARGET_OBJECT_TYPE_CORPSE:
+                    if (providedTargetMask & (TARGET_FLAG_CORPSE_MASK | TARGET_FLAG_UNIT_MASK))
+                        continue;
+                    break;
+                case TARGET_OBJECT_TYPE_ITEM:
+                    if (providedTargetMask & (TARGET_FLAG_GAMEOBJECT_ITEM | TARGET_FLAG_ITEM))
+                        continue;
+                    break;
+                case TARGET_OBJECT_TYPE_GOBJ:
+                    if (providedTargetMask & TARGET_FLAG_GAMEOBJECT_MASK)
+                        continue;
+                    break;
+                case TARGET_OBJECT_TYPE_GOBJ_ITEM:
+                    if (providedTargetMask & (TARGET_FLAG_GAMEOBJECT_ITEM | TARGET_FLAG_GAMEOBJECT | TARGET_FLAG_ITEM))
+                        continue;
+                    break;
+                default:
+                    continue;
+            }
+
+            // extend explicit target mask only if valid targets for effect could not be provided by target types
+            targetMask |= effImplicitTargetMask &~(providedTargetMask);
+        }
+    }
+    return targetMask;
 }
 
 bool SpellInfo::_IsPositiveEffect(uint8 effIndex, bool deep) const

@@ -1,4 +1,4 @@
-/*
+    /*
  * Copyright (C) 2008-2011 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
  *
@@ -103,8 +103,11 @@ DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellInfo const* spellproto,
         }
         case SPELLFAMILY_WARRIOR:
         {
+            // Hamstring - limit duration to 10s in PvP
+            if (spellproto->SpellFamilyFlags[0] & 0x2)
+                return DIMINISHING_LIMITONLY;
             // Improved Hamstring
-            if (spellproto->AttributesEx3 & 0x80000 && spellproto->SpellIconID == 23)
+            else if (spellproto->AttributesEx3 & 0x80000 && spellproto->SpellIconID == 23)
                 return DIMINISHING_ROOT;
             // Charge Stun (own diminishing)
             else if (spellproto->SpellFamilyFlags[0] & 0x01000000)
@@ -116,6 +119,9 @@ DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellInfo const* spellproto,
             // Death Coil
             if (spellproto->SpellFamilyFlags[0] & 0x80000)
                 return DIMINISHING_HORROR;
+            // Curses/etc
+            else if ((spellproto->SpellFamilyFlags[0] & 0x80000000) || (spellproto->SpellFamilyFlags[1] & 0x200))
+                return DIMINISHING_LIMITONLY;
             // Seduction
             else if (spellproto->SpellFamilyFlags[1] & 0x10000000)
                 return DIMINISHING_FEAR;
@@ -140,6 +146,9 @@ DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellInfo const* spellproto,
             // Nature's Grasp
             else if (spellproto->SpellFamilyFlags[0] & 0x00000200)
                 return DIMINISHING_CONTROLLED_ROOT;
+            // Faerie Fire
+            else if (spellproto->SpellFamilyFlags[0] & 0x400)
+                return DIMINISHING_LIMITONLY;
             break;
         }
         case SPELLFAMILY_ROGUE:
@@ -153,12 +162,18 @@ DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellInfo const* spellproto,
             // Cheap Shot
             else if (spellproto->SpellFamilyFlags[0] & 0x400)
                 return DIMINISHING_OPENING_STUN;
+            // Crippling poison - Limit to 10 seconds in PvP (No SpellFamilyFlags)
+            else if (spellproto->SpellIconID == 163)
+                return DIMINISHING_LIMITONLY;
             break;
         }
         case SPELLFAMILY_HUNTER:
         {
+            // Hunter's mark
+            if ((spellproto->SpellFamilyFlags[0] & 0x400) && spellproto->SpellIconID == 538)
+                return DIMINISHING_LIMITONLY;
             // Scatter Shot (own diminishing)
-            if ((spellproto->SpellFamilyFlags[0] & 0x40000) && spellproto->SpellIconID == 132)
+            else if ((spellproto->SpellFamilyFlags[0] & 0x40000) && spellproto->SpellIconID == 132)
                 return DIMINISHING_SCATTER_SHOT;
             // Entrapment (own diminishing)
             else if (spellproto->SpellVisual[0] == 7484 && spellproto->SpellIconID == 20)
@@ -173,8 +188,11 @@ DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellInfo const* spellproto,
         }
         case SPELLFAMILY_PALADIN:
         {
+            // Judgement of Justice - limit duration to 10s in PvP
+            if (spellproto->SpellFamilyFlags[0] & 0x100000)
+                return DIMINISHING_LIMITONLY;
             // Turn Evil
-            if ((spellproto->SpellFamilyFlags[1] & 0x804000) && spellproto->SpellIconID == 309)
+            else if ((spellproto->SpellFamilyFlags[1] & 0x804000) && spellproto->SpellIconID == 309)
                 return DIMINISHING_FEAR;
             break;
         }
@@ -183,6 +201,9 @@ DiminishingGroup GetDiminishingReturnsGroupForSpell(SpellInfo const* spellproto,
             // Hungering Cold (no flags)
             if (spellproto->SpellIconID == 2797)
                 return DIMINISHING_DISORIENT;
+            // Mark of Blood
+            else if ((spellproto->SpellFamilyFlags[0] & 0x10000000) && spellproto->SpellIconID == 2285)
+                return DIMINISHING_LIMITONLY;
             break;
         }
         default:
@@ -227,6 +248,9 @@ DiminishingReturnsType GetDiminishingReturnsGroupType(DiminishingGroup group)
         case DIMINISHING_CYCLONE:
         case DIMINISHING_CHARGE:
             return DRTYPE_ALL;
+        case DIMINISHING_LIMITONLY:
+        case DIMINISHING_NONE:
+            return DRTYPE_NONE;
         default:
             return DRTYPE_PLAYER;
     }
@@ -432,7 +456,7 @@ void SpellMgr::SetSpellDifficultyId(uint32 spellId, uint32 id)
     mSpellDifficultySearcherMap[spellId] = id;
 }
 
-uint32 SpellMgr::GetSpellIdForDifficulty(uint32 spellId, Unit* caster) const
+uint32 SpellMgr::GetSpellIdForDifficulty(uint32 spellId, Unit const* caster) const
 {
     if (!GetSpellInfo(spellId))
         return spellId;
@@ -474,7 +498,7 @@ uint32 SpellMgr::GetSpellIdForDifficulty(uint32 spellId, Unit* caster) const
     return uint32(difficultyEntry->SpellID[mode]);
 }
 
-SpellInfo const* SpellMgr::GetSpellForDifficultyFromSpell(SpellInfo const* spell, Unit* caster) const
+SpellInfo const* SpellMgr::GetSpellForDifficultyFromSpell(SpellInfo const* spell, Unit const* caster) const
 {
     uint32 newSpellId = GetSpellIdForDifficulty(spell->Id, caster);
     SpellInfo const* newSpell = GetSpellInfo(newSpellId);
@@ -1297,7 +1321,7 @@ void SpellMgr::LoadSpellLearnSkills()
 
     // search auto-learned skills and add its to map also for use in unlearn spells/talents
     uint32 dbc_count = 0;
-    for (uint32 spell = 0; spell < sSpellMgr->GetSpellInfoStoreSize(); ++spell)
+    for (uint32 spell = 0; spell < GetSpellInfoStoreSize(); ++spell)
     {
         SpellInfo const* entry = GetSpellInfo(spell);
 
@@ -2633,6 +2657,7 @@ void SpellMgr::LoadSpellCustomAttr()
                     spellInfo->AttributesCu |= SPELL_ATTR0_CU_AURA_CC;
                     break;
             }
+
             switch (spellInfo->Effects[j].Effect)
             {
                 case SPELL_EFFECT_SCHOOL_DAMAGE:
@@ -2668,7 +2693,7 @@ void SpellMgr::LoadSpellCustomAttr()
                             if (enchant->type[s] != ITEM_ENCHANTMENT_TYPE_COMBAT_SPELL)
                                 continue;
 
-                            SpellInfo* procInfo = (SpellInfo*)sSpellMgr->GetSpellInfo(enchant->spellid[s]);
+                            SpellInfo* procInfo = (SpellInfo*)GetSpellInfo(enchant->spellid[s]);
                             if (!procInfo)
                                 continue;
 
@@ -2796,21 +2821,6 @@ void SpellMgr::LoadSpellCustomAttr()
                 // ONLY SPELLS WITH SPELLFAMILY_GENERIC and EFFECT_SCHOOL_DAMAGE
                 spellInfo->AttributesCu |= SPELL_ATTR0_CU_SHARE_DAMAGE;
                 break;
-            case 27820: // Mana Detonation
-            case 69782: // Ooze Flood
-            case 69796: // Ooze Flood
-            case 69798: // Ooze Flood
-            case 69801: // Ooze Flood
-            case 69538: // Ooze Combine
-            case 69553: // Ooze Combine
-            case 69610: // Ooze Combine
-            case 71447: // Bloodbolt Splash
-            case 71481: // Bloodbolt Splash
-            case 71482: // Bloodbolt Splash
-            case 71483: // Bloodbolt Splash
-            case 71390: // Pact of the Darkfallen
-                spellInfo->AttributesCu |= SPELL_ATTR0_CU_EXCLUDE_SELF;
-                break;
             case 18500: // Wing Buffet
             case 33086: // Wild Bite
             case 49749: // Piercing Blow
@@ -2826,14 +2836,14 @@ void SpellMgr::LoadSpellCustomAttr()
             case 67860: // Impale
             case 69293: // Wing Buffet
             case 74439: // Machine Gun
-                spellInfo->AttributesCu |= SPELL_ATTR0_CU_IGNORE_ARMOR;
-                break;
             case 63278: // Mark of the Faceless (General Vezax)
                 spellInfo->AttributesCu |= SPELL_ATTR0_CU_IGNORE_ARMOR;
                 break;
             case 64422: // Sonic Screech (Auriaya)
                 spellInfo->AttributesCu |= SPELL_ATTR0_CU_SHARE_DAMAGE;
                 spellInfo->AttributesCu |= SPELL_ATTR0_CU_IGNORE_ARMOR;
+                break;
+            default:
                 break;
         }
 
@@ -2887,16 +2897,6 @@ void SpellMgr::LoadDbcDataCorrections()
                     if (SpellImplicitTargetInfo::IsPosition(spellInfo->EffectImplicitTargetA[j]) ||
                         spellInfo->Targets & (TARGET_FLAG_SOURCE_LOCATION | TARGET_FLAG_DEST_LOCATION))
                         spellInfo->Effect[j] = SPELL_EFFECT_TRIGGER_MISSILE;
-                    break;
-            }
-
-            switch (SpellImplicitTargetInfo::Type[spellInfo->EffectImplicitTargetA[j]])
-            {
-                case TARGET_TYPE_UNIT_TARGET:
-                case TARGET_TYPE_DEST_TARGET:
-                    spellInfo->Targets |= TARGET_FLAG_UNIT;
-                    break;
-                default:
                     break;
             }
         }
@@ -3534,8 +3534,6 @@ void SpellMgr::LoadDbcDataCorrections()
                 // Starfall Target Selection
                 if (spellInfo->SpellFamilyFlags[2] & 0x100)
                     spellInfo->MaxAffectedTargets = 2;
-                else
-                    break;
                 break;
             case SPELLFAMILY_PRIEST:
                 // Twin Disciplines should affect at Prayer of Mending
@@ -3551,8 +3549,6 @@ void SpellMgr::LoadDbcDataCorrections()
                 // Seals of the Pure should affect Seal of Righteousness
                 if (spellInfo->SpellIconID == 25 && spellInfo->Attributes & SPELL_ATTR0_PASSIVE)
                     spellInfo->EffectSpellClassMask[0][1] |= 0x20000000;
-                else
-                    break;
                 break;
             case SPELLFAMILY_DEATHKNIGHT:
                 // Icy Touch - extend FamilyFlags (unused value) for Sigil of the Frozen Conscience to use
