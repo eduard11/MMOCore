@@ -144,6 +144,7 @@ enum ArenaAdds
 enum Creatures
 {
     NPC_SIF                         = 33196,
+    NPC_LIGHTNING_ORB               = 33138,
     NPC_POWER_SOURCE                = 34055, // bad id
     NPC_GOLEM_BUNNY                 = 33140  // 33141
 };
@@ -496,6 +497,16 @@ public:
                 events.Reset();
                 DoZoneInCombat();
             }
+        }
+
+        void JustSummoned(Creature* summon)
+        {
+            summons.Summon(summon);
+            if (me->isInCombat())
+                DoZoneInCombat(summon);
+
+            if (summon->GetEntry() == NPC_LIGHTNING_ORB)
+                summon->CastSpell(summon, SPELL_LIGHTNING_DESTRUCTION, true);
         }
 
         void spawnAdd()

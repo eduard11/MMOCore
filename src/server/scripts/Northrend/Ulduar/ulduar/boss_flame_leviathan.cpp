@@ -25,13 +25,14 @@
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 #include "ScriptedGossip.h"
+#include "ScriptedEscortAI.h"
 #include "CombatAI.h"
 #include "PassiveAI.h"
-#include "ScriptedEscortAI.h"
 #include "ObjectMgr.h"
-#include "ulduar.h"
 #include "SpellInfo.h"
+#include "SpellScript.h"
 #include "Vehicle.h"
+#include "ulduar.h"
 
 
 enum Spells
@@ -807,22 +808,29 @@ class npc_mechanolift : public CreatureScript
         {
             npc_mechanoliftAI(Creature* creature) : PassiveAI(creature)
             {
+            }
+
+            void Reset()
+            {
                 me->AddUnitMovementFlag(MOVEMENTFLAG_CAN_FLY | MOVEMENTFLAG_FLYING);
+                me->SetVisible(true);
             }
 
             void DamageTaken(Unit* /*who*/, uint32 &damage)
             {
                 if (damage >= me->GetHealth())
                 {
-                    Creature* liquid = DoSummon(NPC_LIQUID, me, 0, 190000, TEMPSUMMON_TIMED_DESPAWN);
-                    if (liquid)
+                    if (Creature* liquid = DoSummon(NPC_LIQUID, me, 0, 190000, TEMPSUMMON_TIMED_DESPAWN))
                     {
                         float x, y, z;
                         me->GetPosition(x, y, z);
                         z = me->GetMap()->GetHeight(x, y, MAX_HEIGHT);
+
+                        liquid->SetFlying(true);
                         liquid->GetMotionMaster()->MovePoint(0, x, y, z);
                     }
 
+                    me->SetVisible(false);
                     me->RemoveUnitMovementFlag(MOVEMENTFLAG_CAN_FLY | MOVEMENTFLAG_FLYING);
                 }
             }
@@ -843,13 +851,11 @@ class npc_liquid_pyrite : public CreatureScript
         {
             npc_liquid_pyriteAI(Creature* creature) : PassiveAI(creature) { }
 
-            uint32 DespawnTimer;
-
             void Reset()
             {
                 DoCast(me, SPELL_LIQUID_PYRITE, true);
                 me->SetDisplayId(28476);
-                DespawnTimer = 7000;
+                _despawnTimer = 7000;
             }
 
             void MovementInform(uint32 type, uint32 /*id*/)
@@ -867,16 +873,20 @@ class npc_liquid_pyrite : public CreatureScript
                 damage = 0;
             }
 
-            void UpdateAI(const uint32 diff)
+            void UpdateAI(uint32 const diff)
             {
-                if (DespawnTimer <= diff)
+                if (_despawnTimer <= diff)
                 {
                     if (me->GetVehicle())
                         me->DisappearAndDie();
-                    DespawnTimer = 7000;
+                    _despawnTimer = 7000;
                 }
-                else DespawnTimer -= diff;
+                else
+                    _despawnTimer -= diff;
             }
+
+        private:
+            uint32 _despawnTimer;
         };
 
         CreatureAI* GetAI(Creature* creature) const
@@ -924,24 +934,26 @@ class npc_pool_of_tar : public CreatureScript
 class npc_colossus : public CreatureScript
 {
     public:
-        npc_colossus() : CreatureScript("npc_colossus") { }
+        npc_colossus() : CreatureScript("npc_colossus")
+        {
+        }
 
         struct npc_colossusAI : public ScriptedAI
         {
             npc_colossusAI(Creature* creature) : ScriptedAI(creature)
             {
-                instance = creature->GetInstanceScript();
+                _instance = creature->GetInstanceScript();
             }
 
             void Reset()
             {
-                GroundSlamTimer = urand(8000, 10000);
+                _groundSlamTimer = urand(8000, 10000);
             }
 
-            void JustDied(Unit* /*Who*/)
+            void JustDied(Unit* /*who*/)
             {
                 if (me->GetHomePosition().IsInDist(Center, 50.f))
-                    instance->SetData(TYPE_COLOSSUS, instance->GetData(TYPE_COLOSSUS)+1);
+                    _instance->SetData(TYPE_COLOSSUS, _instance->GetData(TYPE_COLOSSUS) + 1);
             }
 
             void UpdateAI(uint32 const diff)
@@ -949,19 +961,20 @@ class npc_colossus : public CreatureScript
                 if (!UpdateVictim())
                     return;
 
-                if (GroundSlamTimer <= diff)
+                if (_groundSlamTimer <= diff)
                 {
                     DoCastVictim(SPELL_GROUND_SLAM);
-                    GroundSlamTimer = urand(20000, 25000);
+                    _groundSlamTimer = urand(20000, 25000);
                 }
-                else GroundSlamTimer -= diff;
+                else
+                    _groundSlamTimer -= diff;
 
                 DoMeleeAttackIfReady();
             }
 
         private:
-            uint32 GroundSlamTimer;
-            InstanceScript* instance;
+            uint32 _groundSlamTimer;
+            InstanceScript* _instance;
         };
 
         CreatureAI* GetAI(Creature* creature) const
@@ -1184,6 +1197,50 @@ class npc_freya_ward_summon : public CreatureScript
         {
             return new npc_freya_ward_summonAI(creature);
         }
+};
+
+class npc_leviathan_player_vehicle : public CreatureScript
+{
+public:
+    npc_leviathan_player_vehicle() : CreatureScript("npc_leviathan_player_vehicle")
+    {
+    }
+
+    struct npc_leviathan_player_vehicleAI : public NullCreatureAI
+    {
+        npc_leviathan_player_vehicleAI(Creature* creature) : NullCreatureAI(creature)
+        {
+            _instance = creature->GetInstanceScript();
+        }
+
+        void PassengerBoarded(Unit* unit, int8 seat, bool apply)
+        {
+            if (!unit->ToPlayer() || seat != 0)
+                return;
+
+            if (Creature* leviathan = ObjectAccessor::GetCreature(*me, _instance ? _instance->GetData64(TYPE_LEVIATHAN) : 0))
+            {
+                if (leviathan->isInCombat())
+                {
+                    me->SetInCombatWith(leviathan);
+                    me->AddThreat(leviathan, 1.0f);
+                    leviathan->SetInCombatWith(me);
+                    leviathan->AddThreat(me, 1.0f);
+
+                    if (apply)
+                        me->SetHealth(uint32(me->GetHealth() / 2));
+                }
+            }
+        }
+
+    private:
+        InstanceScript* _instance;
+    };
+
+    CreatureAI* GetAI(Creature* creature) const
+    {
+        return new npc_leviathan_player_vehicleAI(creature);
+    }
 };
 
 //npc lore keeper
@@ -1713,6 +1770,7 @@ void AddSC_boss_flame_leviathan()
     new npc_hodirs_fury();
     new npc_freyas_ward();
     new npc_freya_ward_summon();
+    new npc_leviathan_player_vehicle();
     new npc_lorekeeper();
     // new npc_brann_bronzebeard();
     new go_ulduar_tower();

@@ -38,7 +38,9 @@ enum Spells
     SPELL_STATIC_DISRUPTION_H           = 63495,
     SPELL_OVERWHELMING_POWER_H          = 61888,
     SPELL_OVERWHELMING_POWER            = 64637,
+    SPELL_MELTDOWN                      = 61889,
     SPELL_ELECTRICAL_CHARGE             = 61900,
+    SPELL_ELECTRICAL_CHARGE_TRIGGER     = 61901,
     SPELL_ELECTRICAL_CHARGE_TRIGGERED   = 61902,
 
     // Runemaster Molgeim
@@ -259,7 +261,7 @@ class boss_steelbreaker : public CreatureScript
                         {
                             me->ResetLootMode();
                             DoCast(me, SPELL_ELECTRICAL_CHARGE, true);
-                            events.ScheduleEvent(EVENT_OVERWHELMING_POWER, rand()%5000);
+                            events.ScheduleEvent(EVENT_OVERWHELMING_POWER, 3000);
                         }
                     break;
                 }
@@ -290,7 +292,7 @@ class boss_steelbreaker : public CreatureScript
                     }
 
                     if (!has_supercharge)
-                        DoCast(SPELL_SUPERCHARGE);
+                        DoCast(me, SPELL_SUPERCHARGE, true);
                 }
             }
 
@@ -321,6 +323,12 @@ class boss_steelbreaker : public CreatureScript
                             me->RemoveAurasDueToSpell(SPELL_ELECTRICAL_CHARGE_TRIGGERED);
                         break;
                 }
+            }
+
+            void SpellHitTarget(Unit* target, SpellInfo const* spell)
+            {
+                if (spell->Id == SPELL_MELTDOWN && target && target->ToCreature())
+                    target->CastSpell(me, SPELL_ELECTRICAL_CHARGE_TRIGGER, true);
             }
 
             // try to prefer ranged targets
@@ -377,7 +385,7 @@ class boss_steelbreaker : public CreatureScript
                             DoCast(SPELL_BERSERK);
                             break;
                         case EVENT_FUSION_PUNCH:
-                            DoCastVictim(RAID_MODE(SPELL_FUSION_PUNCH, SPELL_FUSION_PUNCH_H));
+                            DoCastVictim(RAID_MODE<uint32>(SPELL_FUSION_PUNCH, SPELL_FUSION_PUNCH_H));
                             events.ScheduleEvent(EVENT_FUSION_PUNCH, urand(13000, 22000));
                             break;
                         case EVENT_STATIC_DISRUPTION:
@@ -386,14 +394,17 @@ class boss_steelbreaker : public CreatureScript
                             if (!target)
                                 target = SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true);
                             if (target)
-                                DoCast(target, RAID_MODE(SPELL_STATIC_DISRUPTION, SPELL_STATIC_DISRUPTION_H));
+                                DoCast(target, RAID_MODE<uint32>(SPELL_STATIC_DISRUPTION, SPELL_STATIC_DISRUPTION_H));
                             events.ScheduleEvent(EVENT_STATIC_DISRUPTION, 20000);
                             break;
                         }
                         case EVENT_OVERWHELMING_POWER:
-                            DoScriptText(SAY_STEELBREAKER_POWER, me);
-                            DoCastVictim(RAID_MODE(SPELL_OVERWHELMING_POWER, SPELL_OVERWHELMING_POWER_H));
-                            events.ScheduleEvent(EVENT_OVERWHELMING_POWER, RAID_MODE(60000, 35000));
+                            if (me->getVictim() && !me->getVictim()->HasAura(RAID_MODE<uint32>(SPELL_OVERWHELMING_POWER, SPELL_OVERWHELMING_POWER_H)))
+                            {
+                                DoScriptText(SAY_STEELBREAKER_POWER, me);
+                                DoCastVictim(RAID_MODE<uint32>(SPELL_OVERWHELMING_POWER, SPELL_OVERWHELMING_POWER_H));
+                            }
+                            events.ScheduleEvent(EVENT_OVERWHELMING_POWER, 2000);
                             break;
                     }
                 }
@@ -466,7 +477,7 @@ class spell_steelbreaker_electrical_charge : public SpellScriptLoader
             {
                 Unit* target = GetTarget();
                 Unit* caster = GetCaster();
-                if (target && caster && GetTargetApplication()->GetRemoveMode() == AURA_REMOVE_BY_DEATH)
+                if (target && target->ToPlayer() && caster && GetTargetApplication()->GetRemoveMode() == AURA_REMOVE_BY_DEATH)
                     target->CastSpell(caster, GetSpellInfo()->Effects[EFFECT_0].CalcValue(), true);
             }
 
@@ -565,7 +576,7 @@ class boss_runemaster_molgeim : public CreatureScript
                     }
 
                     if (!has_supercharge)
-                        DoCast(me, SPELL_SUPERCHARGE);
+                        DoCast(me, SPELL_SUPERCHARGE, true);
                 }
             }
 
@@ -589,7 +600,7 @@ class boss_runemaster_molgeim : public CreatureScript
                 DoScriptText(RAND(SAY_MOLGEIM_SLAY_1, SAY_MOLGEIM_SLAY_2), me);
             }
 
-            void SpellHit(Unit* /*from*/, const SpellInfo* spell)
+            void SpellHit(Unit* /*from*/, SpellInfo const* spell)
             {
                 if (spell->Id == SPELL_SUPERCHARGE)
                     DoAction(EVENT_UPDATEPHASE);
@@ -886,7 +897,7 @@ class boss_stormcaller_brundir : public CreatureScript
                     }
 
                     if (!has_supercharge)
-                        DoCast(SPELL_SUPERCHARGE);
+                        DoCast(me, SPELL_SUPERCHARGE, true);
                 }
             }
 
@@ -905,7 +916,7 @@ class boss_stormcaller_brundir : public CreatureScript
                 DoScriptText(RAND(SAY_BRUNDIR_SLAY_1, SAY_BRUNDIR_SLAY_2), me);
             }
 
-            void SpellHit(Unit* /*from*/, const SpellInfo *spell)
+            void SpellHit(Unit* /*from*/, SpellInfo const* spell)
             {
                 if (spell->Id == SPELL_SUPERCHARGE)
                     DoAction(EVENT_UPDATEPHASE);

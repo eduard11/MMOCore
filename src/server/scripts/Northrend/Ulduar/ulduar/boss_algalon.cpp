@@ -159,8 +159,8 @@ class boss_algalon : public CreatureScript
 
                 DoCast(me, SPELL_DUAL_WIELD, true);
                 me->SetAttackTime(OFF_ATTACK, 1400);
-                me->SetStatFloatValue(UNIT_FIELD_MINOFFHANDDAMAGE, float(RAID_MODE(15000, 30000)));
-                me->SetStatFloatValue(UNIT_FIELD_MAXOFFHANDDAMAGE, float(RAID_MODE(18000, 35000)));
+                me->SetStatFloatValue(UNIT_FIELD_MINOFFHANDDAMAGE, float(RAID_MODE<uint32>(15000, 30000)));
+                me->SetStatFloatValue(UNIT_FIELD_MAXOFFHANDDAMAGE, float(RAID_MODE<uint32>(18000, 35000)));
             }
 
             void JustReachedHome()
@@ -397,8 +397,8 @@ class boss_algalon : public CreatureScript
                         switch (_step)
                         {
                             case 1:
-                                me->SummonGameObject(RAID_MODE(GO_GIFT_OF_THE_OBSERVER_10, GO_GIFT_OF_THE_OBSERVER_25), 1634.258667f, -295.101166f,
-                                    417.321381f, 0, 0, 0, 0, 0, 0);
+                                me->SummonGameObject(RAID_MODE<uint32>(GO_GIFT_OF_THE_OBSERVER_10, GO_GIFT_OF_THE_OBSERVER_25), 1634.258667f,
+                                    -295.101166f, 417.321381f, 0, 0, 0, 0, 0, 0);
                                 _JustDied();
                                 DoScriptText(SAY_DEATH_1, me);
                                 JumpToNextStep(40000);
@@ -443,7 +443,7 @@ class boss_algalon : public CreatureScript
                     {
                         case EVENT_BIGBANG:
                             DoScriptText(RAND(SAY_BIG_BANG_1, SAY_BIG_BANG_2), me);
-                            DoCast(RAID_MODE(SPELL_BIG_BANG_10, SPELL_BIG_BANG_25));
+                            DoCast(RAID_MODE<uint32>(SPELL_BIG_BANG_10, SPELL_BIG_BANG_25));
                             events.ScheduleEvent(EVENT_BIGBANG, 90*IN_MILLISECONDS);
                             break;
                         case EVENT_PHASEPUNCH:
@@ -451,11 +451,11 @@ class boss_algalon : public CreatureScript
                             events.ScheduleEvent(EVENT_PHASEPUNCH, 15*IN_MILLISECONDS);
                             break;
                         case EVENT_QUANTUMSTRIKE:
-                            DoCastVictim(RAID_MODE(SPELL_QUANTUM_STRIKE_10, SPELL_QUANTUM_STRIKE_25));
+                            DoCastVictim(RAID_MODE<uint32>(SPELL_QUANTUM_STRIKE_10, SPELL_QUANTUM_STRIKE_25));
                             events.ScheduleEvent(EVENT_QUANTUMSTRIKE, urand(4*IN_MILLISECONDS, 14*IN_MILLISECONDS));
                             break;
                         case EVENT_COSMICSMASH:
-                            DoCast(RAID_MODE(SPELL_COSMIC_SMASH_10, SPELL_COSMIC_SMASH_25));
+                            DoCast(RAID_MODE<uint32>(SPELL_COSMIC_SMASH_10, SPELL_COSMIC_SMASH_25));
                             events.ScheduleEvent(EVENT_COSMICSMASH, 25*IN_MILLISECONDS);
                             break;
                         case EVENT_COLLAPSINGSTAR:
@@ -525,10 +525,13 @@ class mob_collapsing_star : public CreatureScript
             void AttackStart(Unit* /*target*/) { }
             void MoveInLineOfSight(Unit* /*who*/) { }
 
-            void JustDied(Unit* /*killer*/)
+            void DamageTaken(Unit* /*attacker*/, uint32 &damage)
             {
-                DoCast(me, SPELL_BLACK_HOLE_CREDIT, true);
-                DoCast(me, RAID_MODE(SPELL_BLACK_HOLE_EXPLOSION_10, SPELL_BLACK_HOLE_EXPLOSION_25), true);
+                if (damage >= me->GetHealth())
+                {
+                    DoCast(me, SPELL_BLACK_HOLE_CREDIT, true);
+                    DoCast(me, RAID_MODE<uint32>(SPELL_BLACK_HOLE_EXPLOSION_10, SPELL_BLACK_HOLE_EXPLOSION_25), true);
+                }
             }
 
             void UpdateAI(uint32 const diff)
@@ -587,7 +590,7 @@ class npc_living_constellation : public CreatureScript
             {
                 if (_arcaneBarrageTimer <= diff)
                 {
-                    DoCast(RAID_MODE(SPELL_ARCANE_BARAGE_10, SPELL_ARCANE_BARAGE_25));
+                    DoCast(RAID_MODE<uint32>(SPELL_ARCANE_BARAGE_10, SPELL_ARCANE_BARAGE_25));
                     _arcaneBarrageTimer = urand(5*IN_MILLISECONDS, 8*IN_MILLISECONDS);
                 }
                 else

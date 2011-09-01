@@ -215,7 +215,7 @@ class boss_ignis : public CreatureScript
                         case EVENT_CHANGE_POT:
                             if (Unit* slagPotTarget = Unit::GetUnit(*me, _slagPotGUID))
                             {
-                                slagPotTarget->AddAura(SPELL_SLAG_POT, slagPotTarget);
+                                me->AddAura(SPELL_SLAG_POT, slagPotTarget);
                                 slagPotTarget->ExitVehicle();
                                 slagPotTarget->CastCustomSpell(SPELL_GRAB_ENTER_VEHICLE, SPELLVALUE_BASE_POINT0, 2, me, true);
                                 slagPotTarget->ClearUnitState(UNIT_STAT_ONVEHICLE); // Hack
