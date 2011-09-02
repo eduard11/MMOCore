@@ -29,8 +29,6 @@
 #include "Spell.h"
 #include "SpellAuraEffects.h"
 #include "Battleground.h"
-#include "OutdoorPvPMgr.h"
-#include "OutdoorPvPWG.h"
 #include "Formulas.h"
 #include "GridNotifiers.h"
 #include "GridNotifiersImpl.h"
@@ -3473,8 +3471,6 @@ void AuraEffect::HandleAuraModEffectImmunity(AuraApplication const* aurApp, uint
                 if (Battleground* bg = target->ToPlayer()->GetBattleground())
                     bg->EventPlayerDroppedFlag(target->ToPlayer());
             }
-            else
-                sOutdoorPvPMgr->HandleDropFlag((Player*)target, GetSpellInfo()->Id);
         }
     }
 }
@@ -4961,18 +4957,6 @@ void AuraEffect::HandleAuraDummy(AuraApplication const* aurApp, uint8 mode, bool
                             if (aurApp->GetRemoveMode() != AURA_REMOVE_BY_DEFAULT)
                                 caster->SetReducedThreatPercent(0, 0);
                             break;
-                    }
-                    break;
-                case SPELLFAMILY_PRIEST:
-                    // Vampiric Touch
-                    if (m_spellInfo->SpellFamilyFlags[1] & 0x0400 && aurApp->GetRemoveMode() == AURA_REMOVE_BY_ENEMY_SPELL && GetEffIndex() == 0)
-                    {
-                        if (AuraEffect const* aurEff = GetBase()->GetEffect(1))
-                        {
-                            int32 damage = aurEff->GetAmount() * 8;
-                            // backfire damage
-                            target->CastCustomSpell(target, 64085, &damage, NULL, NULL, true, NULL, NULL, GetCasterGUID());
-                        }
                     }
                     break;
                 case SPELLFAMILY_WARLOCK:

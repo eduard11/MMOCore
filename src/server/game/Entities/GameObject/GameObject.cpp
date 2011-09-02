@@ -36,7 +36,6 @@
 #include "InstanceScript.h"
 #include "Battleground.h"
 #include "Util.h"
-#include "OutdoorPvPMgr.h"
 #include "BattlegroundAV.h"
 #include "ScriptMgr.h"
 #include "CreatureAISelector.h"
@@ -1590,15 +1589,6 @@ void GameObject::Use(Unit* user)
         return;
 
     SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(spellId);
-    if (!spellInfo)
-    {
-        if (user->GetTypeId() != TYPEID_PLAYER || !sOutdoorPvPMgr->HandleCustomSpell(user->ToPlayer(), spellId, this))
-            sLog->outError("WORLD: unknown spell id %u at use action for gameobject (Entry: %u GoType: %u)", spellId, GetEntry(), GetGoType());
-        else
-            sLog->outDebug(LOG_FILTER_OUTDOORPVP, "WORLD: %u non-dbc spell was handled by OutdoorPvP", spellId);
-        return;
-    }
-
     if (spellCaster)
         spellCaster->CastSpell(user, spellInfo, triggered);
     else

@@ -22,7 +22,6 @@
 #include "DatabaseEnv.h"
 #include "DBCStores.h"
 #include "ObjectMgr.h"
-#include "OutdoorPvPMgr.h"
 #include "ScriptLoader.h"
 #include "ScriptSystem.h"
 #include "Transport.h"
@@ -972,14 +971,6 @@ Battleground* ScriptMgr::CreateBattleground(BattlegroundTypeId /*typeId*/)
     // TODO: Implement script-side battlegrounds.
     ASSERT(false);
     return NULL;
-}
-
-OutdoorPvP* ScriptMgr::CreateOutdoorPvP(OutdoorPvPData const* data)
-{
-    ASSERT(data);
-
-    GET_SCRIPT_RET(OutdoorPvPScript, data->ScriptId, tmpscript, NULL);
-    return tmpscript->GetOutdoorPvP();
 }
 
 std::vector<ChatCommand*> ScriptMgr::GetChatCommands()

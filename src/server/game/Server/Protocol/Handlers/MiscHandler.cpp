@@ -37,7 +37,6 @@
 #include "ObjectAccessor.h"
 #include "Object.h"
 #include "Battleground.h"
-#include "OutdoorPvP.h"
 #include "Pet.h"
 #include "SocialMgr.h"
 #include "CellImpl.h"
@@ -905,11 +904,6 @@ void WorldSession::HandleAreaTriggerOpcode(WorldPacket & recv_data)
         return;
     }
 
-    if (OutdoorPvP * pvp = GetPlayer()->GetOutdoorPvP())
-    {
-        if (pvp->HandleAreaTrigger(_player, Trigger_ID))
-            return;
-    }
 
     // NULL if all values default (non teleport trigger)
     AreaTrigger const* at = sObjectMgr->GetAreaTrigger(Trigger_ID);

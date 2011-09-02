@@ -42,7 +42,6 @@
 #include "GridNotifiers.h"
 #include "GridNotifiersImpl.h"
 #include "CellImpl.h"
-#include "OutdoorPvPMgr.h"
 #include "GameEventMgr.h"
 #include "CreatureGroups.h"
 #include "Vehicle.h"

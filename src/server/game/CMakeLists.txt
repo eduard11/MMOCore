@@ -37,7 +37,6 @@ file(GLOB_RECURSE sources_Mails Mails/*.cpp Mails/*.h)
 file(GLOB_RECURSE sources_Maps Maps/*.cpp Maps/*.h)
 file(GLOB_RECURSE sources_Miscellaneous Miscellaneous/*.cpp Miscellaneous/*.h)
 file(GLOB_RECURSE sources_Movement Movement/*.cpp Movement/*.h)
-file(GLOB_RECURSE sources_OutdoorPvP OutdoorPvP/*.cpp OutdoorPvP/*.h)
 file(GLOB_RECURSE sources_Pools Pools/*.cpp Pools/*.h)
 file(GLOB_RECURSE sources_Quests Quests/*.cpp Quests/*.h)
 file(GLOB_RECURSE sources_Reputation Reputation/*.cpp Reputation/*.h)
@@ -87,7 +86,6 @@ set(game_STAT_SRCS
   ${sources_Maps}
   ${sources_Miscellaneous}
   ${sources_Movement}
-  ${sources_OutdoorPvP}
   ${sources_Pools}
   ${sources_Quests}
   ${sources_Reputation}
@@ -175,7 +173,6 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/Movement
   ${CMAKE_CURRENT_SOURCE_DIR}/Movement/MovementGenerators
   ${CMAKE_CURRENT_SOURCE_DIR}/Movement/Waypoints
-  ${CMAKE_CURRENT_SOURCE_DIR}/OutdoorPvP
   ${CMAKE_CURRENT_SOURCE_DIR}/Pools
   ${CMAKE_CURRENT_SOURCE_DIR}/PrecompiledHeaders
   ${CMAKE_CURRENT_SOURCE_DIR}/Quests

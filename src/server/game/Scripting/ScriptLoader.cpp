@@ -618,17 +618,6 @@ void AddSC_zangarmarsh();
 
 // battlegrounds
 
-// outdoor pvp
-void AddSC_outdoorpvp_ep();
-void AddSC_outdoorpvp_hp();
-void AddSC_outdoorpvp_na();
-void AddSC_outdoorpvp_si();
-void AddSC_outdoorpvp_tf();
-void AddSC_outdoorpvp_zm();
-void AddSC_outdoorpvp_gh();
-void AddSC_outdoorpvp_wg();
-void AddSC_wintergrasp();
-
 // player
 void AddSC_chat_log();
 
@@ -648,7 +637,6 @@ void AddScripts()
     AddOutlandScripts();
     AddNorthrendScripts();
     AddBattlegroundScripts();
-    AddOutdoorPvPScripts();
     AddCustomScripts();
 #endif
 }
@@ -1244,21 +1232,6 @@ void AddNorthrendScripts()
     AddSC_crystalsong_forest();
     AddSC_isle_of_conquest();
 
-    AddSC_wintergrasp();
-#endif
-}
-
-void AddOutdoorPvPScripts()
-{
-#ifdef SCRIPTS
-    AddSC_outdoorpvp_ep();
-    AddSC_outdoorpvp_hp();
-    AddSC_outdoorpvp_na();
-    AddSC_outdoorpvp_si();
-    AddSC_outdoorpvp_tf();
-    AddSC_outdoorpvp_zm();
-    AddSC_outdoorpvp_gh();
-    AddSC_outdoorpvp_wg();
 #endif
 }
 

@@ -17,7 +17,6 @@
  */
 
 #include "ObjectMgr.h"
-#include "OutdoorPvP.h"
 #include "SpellMgr.h"
 #include "VMapManager2.h"
 #include "DisableMgr.h"
@@ -151,15 +150,6 @@ void DisableMgr::LoadDisables()
                 }
                 if (flags)
                     sLog->outErrorDb("Disable flags specified for battleground %u, useless data.", entry);
-                break;
-            case DISABLE_TYPE_OUTDOORPVP:
-                if (entry > MAX_OUTDOORPVP_TYPES)
-                {
-                    sLog->outErrorDb("OutdoorPvPTypes value %u from `disables` is invalid, skipped.", entry);
-                    continue;
-                }
-                if (flags)
-                    sLog->outErrorDb("Disable flags specified for outdoor PvP %u, useless data.", entry);
                 break;
             case DISABLE_TYPE_ACHIEVEMENT_CRITERIA:
                 if (!sAchievementCriteriaStore.LookupEntry(entry))

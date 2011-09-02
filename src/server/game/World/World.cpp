@@ -50,8 +50,6 @@
 #include "MapManager.h"
 #include "CreatureAIRegistry.h"
 #include "BattlegroundMgr.h"
-#include "OutdoorPvPMgr.h"
-#include "OutdoorPvPWG.h"
 #include "TemporarySummon.h"
 #include "WaypointMovementGenerator.h"
 #include "VMapFactory.h"
@@ -1745,10 +1743,6 @@ void World::SetInitialWorldSettings()
     sBattlegroundMgr->CreateInitialBattlegrounds();
     sBattlegroundMgr->InitAutomaticArenaPointDistribution();
 
-    ///- Initialize outdoor pvp
-    sLog->outString("Starting Outdoor PvP System");
-    sOutdoorPvPMgr->InitOutdoorPvP();
-
     sLog->outString("Loading Transports...");
     sMapMgr->LoadTransports();
 
@@ -2007,9 +2001,6 @@ void World::Update(uint32 diff)
 
     sBattlegroundMgr->Update(diff);
     RecordTimeDiff("UpdateBattlegroundMgr");
-
-    sOutdoorPvPMgr->Update(diff);
-    RecordTimeDiff("UpdateOutdoorPvPMgr");
 
     ///- Delete all characters which have been deleted X days before
     if (m_timers[WUPDATE_DELETECHARS].Passed())
@@ -2900,32 +2891,6 @@ void World::ProcessQueryCallbacks()
             lResult.get(result);
             _UpdateRealmCharCount(result);
             lResult.cancel();
-        }
-    }
-}
-
-void World::SendWintergraspState()
-{
-    OutdoorPvPWG *pvpWG = (OutdoorPvPWG*)sOutdoorPvPMgr->GetOutdoorPvPToZoneId(4197);
-
-    if (!pvpWG)
-        return;
-
-    for (SessionMap::const_iterator itr = m_sessions.begin(); itr != m_sessions.end(); ++itr)
-    {
-        if (!itr->second || !itr->second->GetPlayer() || !itr->second->GetPlayer()->IsInWorld())
-            continue;
-
-        if (pvpWG->isWarTime()) // "Battle in progress"
-        {
-            itr->second->GetPlayer()->SendUpdateWorldState(ClockWorldState[1], uint32(time(NULL)));
-        } 
-        else // Time to next battle
-        {
-            pvpWG->SendInitWorldStatesTo(itr->second->GetPlayer());
-            itr->second->GetPlayer()->SendUpdateWorldState(ClockWorldState[1], uint32(time(NULL) + pvpWG->GetTimer()));
-            // Hide unneeded info which in center of screen
-            itr->second->GetPlayer()->SendInitWorldStates(itr->second->GetPlayer()->GetZoneId(), itr->second->GetPlayer()->GetAreaId());
         }
     }
 }

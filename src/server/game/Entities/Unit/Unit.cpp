@@ -42,7 +42,6 @@
 #include "Util.h"
 #include "Totem.h"
 #include "Battleground.h"
-#include "OutdoorPvP.h"
 #include "InstanceSaveMgr.h"
 #include "GridNotifiersImpl.h"
 #include "CellImpl.h"
@@ -15694,10 +15693,6 @@ void Unit::Kill(Unit* victim, bool durabilityLoss)
 
     // outdoor pvp things, do these after setting the death state, else the player activity notify won't work... doh...
     // handle player kill only if not suicide (spirit of redemption for example)
-    if (player && this != victim)
-        if (OutdoorPvP* pvp = player->GetOutdoorPvP())
-            pvp->HandleKill(player, victim);
-
     //if (victim->GetTypeId() == TYPEID_PLAYER)
     //    if (OutdoorPvP* pvp = victim->ToPlayer()->GetOutdoorPvP())
     //        pvp->HandlePlayerActivityChangedpVictim->ToPlayer();

@@ -57,9 +57,6 @@
 #include "Battleground.h"
 #include "BattlegroundAV.h"
 #include "BattlegroundMgr.h"
-#include "OutdoorPvP.h"
-#include "OutdoorPvPMgr.h"
-#include "OutdoorPvPWG.h"
 #include "ArenaTeam.h"
 #include "Chat.h"
 #include "Spell.h"
@@ -2416,7 +2413,6 @@ void Player::RemoveFromWorld()
         StopCastingCharm();
         StopCastingBindSight();
         UnsummonPetTemporaryIfAny();
-        sOutdoorPvPMgr->HandlePlayerLeaveZone(this, m_zoneUpdateId);
     }
 
     ///- Do not add/remove the player from the object storage
@@ -5116,7 +5112,6 @@ void Player::ResurrectPlayer(float restore_percent, bool applySickness)
     uint32 newzone, newarea;
     GetZoneAndAreaId(newzone, newarea);
     UpdateZone(newzone, newarea);
-    sOutdoorPvPMgr->HandlePlayerResurrects(this, newzone);
 
     if (InBattleground())
     {
@@ -7467,18 +7462,7 @@ void Player::UpdateZone(uint32 newZone, uint32 newArea)
 {
     if (m_zoneUpdateId != newZone)
     {
-        sOutdoorPvPMgr->HandlePlayerLeaveZone(this, m_zoneUpdateId);
-        sOutdoorPvPMgr->HandlePlayerEnterZone(this, newZone);
         SendInitWorldStates(newZone, newArea);              // only if really enters to new zone, not just area change, works strange...
-    }
-     // Prevent players from accessing GM Island
-    if (sWorld->getBoolConfig(CONFIG_PREVENT_PLAYERS_ACCESS_TO_GMISLAND))
-    {
-        if (newZone == 876 && GetSession()->GetSecurity() == SEC_PLAYER)
-        {
-            sLog->outError("Player (GUID: %u) tried to access GM Island.", GetGUIDLow());
-            TeleportTo(13,1.118799,0.477914,-144.708650,3.133046);
-        }
     }
 
     m_zoneUpdateId    = newZone;
@@ -9091,7 +9075,6 @@ void Player::SendInitWorldStates(uint32 zoneid, uint32 areaid)
     Battleground* bg = GetBattleground();
     uint16 NumberOfFields = 0;
     uint32 mapid = GetMapId();
-    OutdoorPvP * pvp = sOutdoorPvPMgr->GetOutdoorPvPToZoneId(zoneid);
     InstanceScript* instance = GetInstanceScript();
 
     sLog->outDebug(LOG_FILTER_NETWORKIO, "Sending SMSG_INIT_WORLD_STATES to Map: %u, Zone: %u", mapid, zoneid);
@@ -9218,9 +9201,6 @@ void Player::SendInitWorldStates(uint32 zoneid, uint32 areaid)
         case 2257:                                          // Deeprun Tram
             break;
         case 139:                                           // Eastern Plaguelands
-            if (pvp && pvp->GetTypeId() == OUTDOOR_PVP_EP)
-                pvp->FillInitialWorldStates(data);
-            else
             {
                 data << uint32(0x97a) << uint32(0x0); // 10 2426
                 data << uint32(0x917) << uint32(0x0); // 11 2327
@@ -9258,9 +9238,6 @@ void Player::SendInitWorldStates(uint32 zoneid, uint32 areaid)
             }
             break;
         case 1377:                                          // Silithus
-            if (pvp && pvp->GetTypeId() == OUTDOOR_PVP_SI)
-                pvp->FillInitialWorldStates(data);
-            else
             {
                 // states are always shown
                 data << uint32(2313) << uint32(0x0); // 7 ally silityst gathered
@@ -9452,9 +9429,6 @@ void Player::SendInitWorldStates(uint32 zoneid, uint32 areaid)
         // any of these needs change! the client remembers the prev setting!
         // ON EVERY ZONE LEAVE, RESET THE OLD ZONE'S WORLD STATE, BUT AT LEAST THE UI STUFF!
         case 3483:                                          // Hellfire Peninsula
-            if (pvp && pvp->GetTypeId() == OUTDOOR_PVP_HP)
-                pvp->FillInitialWorldStates(data);
-            else
             {
                 data << uint32(0x9ba) << uint32(0x1);           // 10 // add ally tower main gui icon       // maybe should be sent only on login?
                 data << uint32(0x9b9) << uint32(0x1);           // 11 // add horde tower main gui icon      // maybe should be sent only on login?
@@ -9475,9 +9449,6 @@ void Player::SendInitWorldStates(uint32 zoneid, uint32 areaid)
             }
             break;
         case 3518:                                          // Nagrand
-            if (pvp && pvp->GetTypeId() == OUTDOOR_PVP_NA)
-                pvp->FillInitialWorldStates(data);
-            else
             {
                 data << uint32(2503) << uint32(0x0);    // 10
                 data << uint32(2502) << uint32(0x0);    // 11
@@ -9516,9 +9487,6 @@ void Player::SendInitWorldStates(uint32 zoneid, uint32 areaid)
             }
             break;
         case 3519:                                          // Terokkar Forest
-            if (pvp && pvp->GetTypeId() == OUTDOOR_PVP_TF)
-                pvp->FillInitialWorldStates(data);
-            else
             {
                 data << uint32(0xa41) << uint32(0x0);           // 10 // 2625 capture bar pos
                 data << uint32(0xa40) << uint32(0x14);          // 11 // 2624 capture bar neutral
@@ -9550,9 +9518,6 @@ void Player::SendInitWorldStates(uint32 zoneid, uint32 areaid)
             }
             break;
         case 3521:                                          // Zangarmarsh
-            if (pvp && pvp->GetTypeId() == OUTDOOR_PVP_ZM)
-                pvp->FillInitialWorldStates(data);
-            else
             {
                 data << uint32(0x9e1) << uint32(0x0);           // 10 //2529
                 data << uint32(0x9e0) << uint32(0x0);           // 11
@@ -14179,10 +14144,6 @@ void Player::PrepareGossipMenu(WorldObject* source, uint32 menuId /*= 0*/, bool 
                 case GOSSIP_OPTION_TABARDDESIGNER:
                 case GOSSIP_OPTION_AUCTIONEER:
                     break;                                  // no checks
-                case GOSSIP_OPTION_OUTDOORPVP:
-                    if (!sOutdoorPvPMgr->CanTalkTo(this, creature, itr->second))
-                        canTalk = false;
-                    break;
                 default:
                     sLog->outErrorDb("Creature entry %u have unknown gossip option %u for menu %u", creature->GetEntry(), itr->second.OptionType, itr->second.MenuId);
                     canTalk = false;
@@ -14318,9 +14279,6 @@ void Player::OnGossipSelect(WorldObject* source, uint32 gossipListId, uint32 men
 
             break;
         }
-        case GOSSIP_OPTION_OUTDOORPVP:
-            sOutdoorPvPMgr->HandleGossipOption(this, source->GetGUID(), gossipListId);
-            break;
         case GOSSIP_OPTION_SPIRITHEALER:
             if (isDead())
                 source->ToCreature()->CastSpell(source->ToCreature(), 17251, true, NULL, NULL, GetGUID());
@@ -22249,10 +22207,6 @@ void Player::AutoUnequipOffhandIfNeed(bool force /*= false*/)
     }
 }
 
-OutdoorPvP * Player::GetOutdoorPvP() const
-{
-    return sOutdoorPvPMgr->GetOutdoorPvPToZoneId(GetZoneId());
-}
 
 bool Player::HasItemFitToSpellRequirements(SpellInfo const* spellInfo, Item const* ignoreItem)
 {
